@@ -293,5 +293,113 @@ jawaban.
 dig k37.com
 ```
 
-hasilnya seperti ini
+hasilnya seperti ini'
+
 <img src="Assets/soal4_validasi dns master.png" width="800" height="900">
+
+# soal no.5
+
+Entitas tanpa identitas adalah anomali," pesan Rootkit. Namai semua Entitas (hostname) sesuai glosarium: rootkit, alpha, beta, gamma, delta, epsilon, prab, tedd, abbey, penny, obladi, desmond, oblada, molly, dan verifikasi bahwa setiap host mengenali hostname tersebut secara system-wide. Buat setiap domain untuk masing-masing node sesuai dengan namanya (contoh: alpha.<xxxx>.com) dan assign IP masing-masing juga. Lakukan pengecualian untuk node yang bertanggung jawab atas prab dan tedd
+
+### Konfigurasi Hostname
+
+Langkah pertama adalah memberikan hostname kepada setiap host sesuai dengan nama yang telah ditentukan. Konfigurasi dilakukan secara langsung pada masing-masing node dengan menyimpan hostname pada `/etc/hostname` dan menerapkannya menggunakan perintah `hostname`.
+contoh di `Alpha`
+```bash
+echo alpha > /etc/hostname && hostname alpha
+```
+Node yang dikonfigurasi meliputi:
+
+
+- alpha
+- beta
+- gamma
+- delta
+- epsilon
+- abbey
+- penny
+- obladi
+- desmond
+- oblada
+- molly
+
+Sedangkan `prab` dan `tedd` tidak dikonfigurasi ulang karena keduanya merupakan node yang bertanggung jawab sebagai NS1 dan NS2.
+
+Identifikasi IP Address Setiap Host
+
+```bash
+hostname -I
+```
+sehingga diperoleh IP dari masing masing host
+
+<img src="Assets/soal5_Ip hostname.png" >
+
+
+| No. | Host    | IP Address  |
+| --: | ------- | ----------- |
+|   1 | rootkit | `10.82.1.1` |
+|   2 | prab    | `10.82.1.2` |
+|   3 | tedd    | `10.82.1.3` |
+|   4 | obladi  | `10.82.1.4` |
+|   5 | desmond | `10.82.1.5` |
+|   6 | oblada  | `10.82.1.6` |
+|   7 | molly   | `10.82.1.7` |
+|   8 | alpha   | `10.82.2.2` |
+|   9 | beta    | `10.82.2.3` |
+|  10 | gamma   | `10.82.2.4` |
+|  11 | delta   | `10.82.3.2` |
+|  12 | epsilon | `10.82.3.3` |
+|  13 | abbey   | `10.82.4.2` |
+|  14 | penny   | `10.82.5.2` |
+
+### Konfigurasi Domain pada DNS Master
+
+ ```bash
+root@prab:~# cat > /var/cache/bind/db.k37.com <<'EOF'
+$TTL 300
+
+@   IN  SOA     prab.k37.com. admin.k37.com. (
+        2026092902
+        3600
+        600
+        86400
+        300
+)
+
+    IN  NS      prab.k37.com.
+    IN  NS      tedd.k37.com.
+
+@       IN  A   10.82.5.2
+prab    IN  A   10.82.1.2
+tedd    IN  A   10.82.1.3
+
+alpha       IN  A   10.82.2.2
+beta        IN  A   10.82.2.3
+gamma       IN  A   10.82.2.4
+delta       IN  A   10.82.3.2
+epsilon     IN  A   10.82.3.3
+abbey       IN  A   10.82.4.2
+```
+<img src="Assets/soal5_konfigurasi master.png" >
+
+### Validasi
+
+Setelah konfigurasi hostname dan domain selesai dilakukan, tahap selanjutnya adalah melakukan validasi untuk memastikan bahwa domain yang telah dibuat dapat dikenali oleh client. Validasi dilakukan dari client alpha dengan menggunakan perintah ping terhadap beberapa domain yang telah dikonfigurasi pada DNS Master.
+
+Perintah yang digunakan:
+```bash
+ping beta.k37.com
+ping gamma.k37.com
+ping delta.k37.com
+```
+Pengujian dilakukan untuk memastikan bahwa nama domain dapat diterjemahkan menjadi alamat IP yang sesuai dan host tujuan dapat dijangkau oleh client.
+
+Contoh hasil yang diperoleh:
+```bash
+PING beta.k37.com (10.82.2.3) ...
+64 bytes from 10.82.2.3: ...
+```
+![alt text](image.png)
+
+# soal no. 6
+
