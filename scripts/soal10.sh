@@ -4,9 +4,10 @@
 apt-get update
 apt-get install -y nginx php-fpm
 
-service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
+PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.4")
+service "php${PHP_VER}-fpm" start 2>/dev/null || service php8.4-fpm start 2>/dev/null || service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
 PHP_SOCK=$(ls -1 /run/php/php*-fpm.sock 2>/dev/null | head -n 1)
-[ -z "$PHP_SOCK" ] && PHP_SOCK="/run/php/php8.2-fpm.sock"
+[ -z "$PHP_SOCK" ] && PHP_SOCK="/run/php/php${PHP_VER}-fpm.sock"
 
 mkdir -p /var/www/core
 
@@ -76,9 +77,10 @@ nginx -t && service nginx restart
 apt-get update
 apt-get install -y nginx php-fpm
 
-service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
+PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.4")
+service "php${PHP_VER}-fpm" start 2>/dev/null || service php8.4-fpm start 2>/dev/null || service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
 PHP_SOCK=$(ls -1 /run/php/php*-fpm.sock 2>/dev/null | head -n 1)
-[ -z "$PHP_SOCK" ] && PHP_SOCK="/run/php/php8.2-fpm.sock"
+[ -z "$PHP_SOCK" ] && PHP_SOCK="/run/php/php${PHP_VER}-fpm.sock"
 
 mkdir -p /var/www/core
 

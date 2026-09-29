@@ -903,7 +903,54 @@ curl -i http://vault.k37.com/arsip/
 # Cek tampilan autoindex daftar file
 curl -s http://vault.k37.com/arsip/
 ```
-Respons menampilkan HTML directory listing `Index of /arsip` dengan daftar berkas yang tersedia di dalamnya.
+Respons menampilkan status `HTTP/1.1 200 OK` dan HTML directory listing `Index of /arsip` dengan daftar berkas yang tersedia di dalamnya:
+```html
+HTTP/1.1 200 OK
+Date: Tue, 29 Sep 2026 17:40:10 GMT
+Server: Apache/2.4.68 (Debian)
+Vary: Accept-Encoding
+Content-Length: 1185
+Content-Type: text/html;charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <title>Index of /arsip</title>
+ </head>
+ <body>
+<h1>Index of /arsip</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=D">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/back.gif" alt="[PARENTDIR]"></td><td><a href="/">Parent Directory</a></td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="dokumen1.txt">dokumen1.txt</a></td><td align="right">2026-09-29 17:36  </td><td align="right"> 33 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/layout.gif" alt="[   ]"></td><td><a href="inventaris.pdf">inventaris.pdf</a></td><td align="right">2026-09-29 17:36  </td><td align="right"> 36 </td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+<address>Apache/2.4.68 (Debian) Server at vault.k37.com Port 80</address>
+</body></html>
+```
+
+**Pengujian Tambahan:**
+
+1. **Memastikan konten berkas dalam arsip dapat diunduh/dibaca:**
+   ```bash
+   curl http://vault.k37.com/arsip/dokumen1.txt
+   ```
+   *Output:*
+   ```text
+   Arsip dokumen rahasia 1 - Obladi
+   ```
+
+2. **Memastikan directory listing dimatikan pada direktori root `/` (harus `403 Forbidden`):**
+   ```bash
+   curl -i http://vault.k37.com/
+   ```
+   *Ekspektasi Status:*
+   ```text
+   HTTP/1.1 403 Forbidden
+   ```
+   Hasil status `403 Forbidden` ini membuktikan bahwa konfigurasi keamanan berjalan sesuai spesifikasi: direktif `Options +Indexes` hanya diberlakukan secara spesifik pada `/var/www/vault/arsip`, sedangkan direktori root `/var/www/vault` tetap terlindungi (`Options -Indexes`).
 
 ---
 
