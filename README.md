@@ -1,36 +1,11 @@
 # Jarkom-Modul-2-2026-K-37
 
-Praktikum Jaringan Komputer 2026 - Modul 2 ("The Mesh")
 
-| Nama | NRP | Peran |
-|---|---|---|
-| Azfaro Zid Ilmi | 5027251018 | Orang 1 - Spesialis DNS & Resolusi Nama |
-| Gede Satya Putra Aryanta | 5027251012 | Orang 2 - Spesialis Web Server & Reverse Proxy |
+| Nama | NRP |
+|---|---|
+| Azfaro Zid Ilmi | 5027251018 | 
+| Gede Satya Putra Aryanta | 5027251012 |
 
----
-
-## Pembagian Kerja
-
-Pembagian kerja paling adil dan minim konflik dependensi adalah membagi tugas berdasarkan dua domain keahlian teknis: **Infrastruktur DNS** dan **Web/Reverse Proxy**, setelah fondasi jaringan selesai dibangun bersama.
-
-### Fondasi Awal (Dikerjakan Bersama)
-* **Soal 1–3 (Setup Jaringan & NAT)**: Bangun topologi GNS3, tetapkan alokasi IP seluruh entitas, aktifkan routing dan NAT di `rootkit`, serta tambahkan resolver awal `192.168.122.1` pada seluruh host non-router.
-
-### Orang 1: Spesialis DNS & Resolusi Nama (Azfaro Zid Ilmi)
-* **Soal 4, 6, 8 (Infrastruktur BIND9)**: Konfigurasikan authoritative master di `prab`, slave di `tedd`, mekanisme zone transfer, sinkronisasi serial SOA, serta deklarasi *reverse zone* (PTR).
-* **Soal 5, 7 (Zone Records & Hostname)**: Terapkan penamaan *system-wide* seluruh entitas, buat A record untuk tiap node, petakan A record `vault` dan `core`, serta siapkan CNAME kanonik `www` dan `static`.
-* **Soal 17, 19 (Fitur Record Tambahan)**: Tambahkan TXT record untuk seluruh entitas klien (`alpha`–`epsilon`) serta CNAME `outbound` ke domain publik dan uji aksesnya via `curl`.
-* **Soal 18 (Eksperimen Cache & TTL)**: Atur TTL 15 detik pada A record `abbey`, ubah ke IP fiktif, lalu uji verifikasi 3 fase cache DNS dari sisi klien.
-
-### Orang 2: Spesialis Web Server & Reverse Proxy (Gede Satya Putra Aryanta)
-* **Soal 9, 10 (Backend Web Server)**: Konfigurasikan Apache di area *vault* (`obladi`, `desmond`) dengan fitur autoindex `/arsip/`, serta pasang Nginx + PHP-FPM di area *core* (`oblada`, `molly`) dengan *rewrite rule* `/profil`.
-* **Soal 11, 14 (Reverse Proxy & Logging)**: Siapkan reverse proxy Apache di `penny` dan Nginx di `abbey`, teruskan header `Host` dan `X-Real-IP`, serta modifikasi format log backend agar mencatat IP asli pengunjung.
-* **Soal 12, 13 (Autentikasi & Redirect)**: Pasang Basic Authentication untuk path `/admin` di `penny`, terapkan *redirect* permanen (301) ke `www`, serta *redirect* sementara (302) ke `static`.
-* **Soal 15 (Dedicated Path)**: Buat penanganan rute lokal `/eternal` (eksekusi PHP) pada `penny` dan rute `/orion` (statis murni) pada `abbey`.
-
-### Pengujian Akhir & Otomasi (Kolaborasi)
-* **Soal 16 (Stress Testing)**: Eksekusi pengujian ApacheBench (250 request, konkurensi 10) dari `alpha` ke domain kanonik, sementara rekan memantau stabilitas proxy dan log backend.
-* **Soal 20 (Persistensi & Scripting)**: Rapikan seluruh script instalasi ke dalam direktori `/root` masing-masing node, uji *reboot* untuk memastikan semua layanan autostart, dan ekspor project GNS3.
 
 ---
 
