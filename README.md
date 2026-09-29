@@ -495,3 +495,183 @@ abbey.k37.com.
 ![alt text](Assets/soal7_2.png)dan ![alt text](Assets/soal7_3.png)
 
 Hasil tersebut menunjukkan bahwa vault.k37.com berhasil di-resolve ke dua alamat IP repository statis, yaitu 10.82.1.4 dan 10.82.1.5. core.k37.com berhasil di-resolve ke 10.82.1.6 dan 10.82.1.7. Selain itu, www.k37.com berhasil mengarah ke penny.k37.com, sedangkan static.k37.com mengarah ke abbey.k37.com
+
+# soal no.8
+ 
+ Di prab (ns1) deklarasikan reverse zone untuk segmen jaringan  tempat abbey, penny, area vault, dan area core berada. Di tedd (ns2) tarik reverse zone tersebut sebagai slave, isi PTR untuk keempat hostname itu agar pencarian balik IP address mengembalikan hostname yang benar, lalu pastikan query reverse untuk alamat abbey, penny, area vault, dan area core dijawab authoritative.
+
+### Konfigurasi di Prab (Master)
+
+Pertama, kami mendeklarasikan reverse zone pada file /etc/bind/named.conf.local di Prab sebagai DNS Master.
+``` bash
+cat > /etc/bind/named.conf.local <<'EOF'
+zone "k37.com" {
+    type master;
+    file "/var/cache/bind/db.k37.com";
+    notify yes;
+    allow-transfer { 10.82.1.3; };
+};
+
+zone "1.82.10.in-addr.arpa" {
+    type master;
+    file "/var/cache/bind/db.10.82.1";
+    notify yes;
+    allow-transfer { 10.82.1.3; };
+};
+
+zone "4.82.10.in-addr.arpa" {
+    type master;
+    file "/var/cache/bind/db.10.82.4";
+    notify yes;
+    allow-transfer { 10.82.1.3; };
+};
+
+zone "5.82.10.in-addr.arpa" {
+    type master;
+    file "/var/cache/bind/db.10.82.5";
+    notify yes;
+    allow-transfer { 10.82.1.3; };
+};
+EOF
+```
+Pada konfigurasi tersebut, Prab dengan alamat IP 10.82.1.2 bertindak sebagai Master, sedangkan 10.82.1.3 merupakan alamat IP Tedd yang diberikan izin untuk melakukan zone transfer.
+
+Selanjutnya, kami membuat file reverse zone untuk jaringan 10.82.1.0/24 dan mengisinya dengan record PTR untuk hostname yang berada pada jaringan tersebut.
+``` bash
+cat > /var/cache/bind/db.10.82.1 <<'EOF'
+$TTL 300
+@ IN SOA prab.k37.com. admin.k37.com. (
+    2026092901
+    3600
+    600
+    86400
+    300
+)
+@ IN NS prab.k37.com.
+@ IN NS tedd.k37.com.
+
+4 IN PTR obladi.k37.com.
+5 IN PTR desmond.k37.com.
+6 IN PTR oblada.k37.com.
+7 IN PTR molly.k37.com.
+EOF
+```
+![alt text](Assets/soal8_1.png)
+
+Record PTR tersebut digunakan untuk menghubungkan alamat IP dengan hostname:
+```bash
+10.82.1.4 → obladi.k37.com
+10.82.1.5 → desmond.k37.com
+10.82.1.6 → oblada.k37.com
+10.82.1.7 → molly.k37.com
+```
+Kemudian dibuat reverse zone untuk jaringan 10.82.4.0/24 yang digunakan oleh abbey.
+```bash
+cat > /var/cache/bind/db.10.82.4 <<'EOF'
+$TTL 300
+@ IN SOA prab.k37.com. admin.k37.com. (
+    2026092901
+    3600
+    600
+    86400
+    300
+)
+@ IN NS prab.k37.com.
+@ IN NS tedd.k37.com.
+
+2 IN PTR abbey.k37.com.
+EOF
+```
+
+
+Selanjutnya dibuat reverse zone untuk jaringan 10.82.5.0/24 yang digunakan oleh penny.
+
+```bash
+cat > /var/cache/bind/db.10.82.5 <<'EOF'
+$TTL 300
+@ IN SOA prab.k37.com. admin.k37.com. (
+    2026092901
+    3600
+    600
+    86400
+    300
+)
+@ IN NS prab.k37.com.
+@ IN NS tedd.k37.com.
+
+2 IN PTR penny.k37.com.
+EOF
+```
+```bash
+Setelah konfigurasi Master selesai, kami melakukan pengujian menggunakan dig dengan DNS server Prab pada alamat 10.82.1.2.
+
+dig @10.82.1.2 -x 10.82.1.4 +short
+dig @10.82.1.2 -x 10.82.1.5 +short
+dig @10.82.1.2 -x 10.82.1.6 +short
+dig @10.82.1.2 -x 10.82.1.7 +short
+dig @10.82.1.2 -x 10.82.4.2 +short
+dig @10.82.1.2 -x 10.82.5.2 +short
+```
+Hasil yang diperoleh:
+```bash
+obladi.k37.com.
+desmond.k37.com.
+oblada.k37.com.
+molly.k37.com.
+abbey.k37.com.
+penny.k37.com.
+```
+Hasil tersebut menunjukkan bahwa Prab berhasil mengembalikan hostname berdasarkan alamat IP yang diberikan.
+
+### Konfigurasi di Tedd (Slave)
+
+Selanjutnya, kami mengonfigurasi Tedd sebagai DNS Slave. Tedd mengambil reverse zone dari Prab sebagai Master melalui alamat 10.82.1.2.
+
+Konfigurasi pada /etc/bind/named.conf.local di Tedd adalah:
+``` bash
+cat > /etc/bind/named.conf.local <<'EOF'
+zone "k37.com" {
+    type slave;
+    masters { 10.82.1.2; };
+    file "/var/cache/bind/db.k37.com";
+};
+
+zone "1.82.10.in-addr.arpa" {
+    type slave;
+    masters { 10.82.1.2; };
+    file "/var/cache/bind/db.10.82.1";
+};
+
+zone "4.82.10.in-addr.arpa" {
+    type slave;
+    masters { 10.82.1.2; };
+    file "/var/cache/bind/db.10.82.4";
+};
+
+zone "5.82.10.in-addr.arpa" {
+    type slave;
+    masters { 10.82.1.2; };
+    file "/var/cache/bind/db.10.82.5";
+};
+EOF
+```
+![alt text](image.png)
+
+Kemudian dilakukan pengujian reverse DNS melalui DNS Slave pada alamat 10.82.1.3.
+```bash
+dig @10.82.1.3 -x 10.82.1.4 +short
+dig @10.82.1.3 -x 10.82.1.5 +short
+dig @10.82.1.3 -x 10.82.1.6 +short
+dig @10.82.1.3 -x 10.82.1.7 +short
+dig @10.82.1.3 -x 10.82.4.2 +short
+dig @10.82.1.3 -x 10.82.5.2 +short
+```
+Hasil yang diperoleh:
+```
+obladi.k37.com.
+desmond.k37.com.
+oblada.k37.com.
+molly.k37.com.
+abbey.k37.com.
+penny.k37.com.
+```
