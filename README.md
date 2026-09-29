@@ -655,7 +655,7 @@ zone "5.82.10.in-addr.arpa" {
 };
 EOF
 ```
-![alt text](image.png)
+![Assets/soal8_2.png](Assets/soal8_2.png)
 
 Kemudian dilakukan pengujian reverse DNS melalui DNS Slave pada alamat 10.82.1.3.
 ```bash
