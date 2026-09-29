@@ -1,79 +1,76 @@
 # Jarkom-Modul-2-2026-K-37
 
-
 | Nama | NRP |
 |---|---|
-| Azfaro Zid Ilmi | 5027251018 | 
+| Azfaro Zid Ilmi | 5027251018 |
 | Gede Satya Putra Aryanta | 5027251012 |
-
 
 ---
 
 ## Daftar Isi
 
-- [Informasi Topologi & Pembagian IP](#informasi-topologi--pembagian-ip)
-- [Nomor 1 - Satya & Azfaro](#nomor-1---satya--azfaro)
-- [Nomor 2 - Satya & Azfaro](#nomor-2---satya--azfaro)
-- [Nomor 3 - Satya & Azfaro](#nomor-3---satya--azfaro)
-- [Nomor 4 - Azfaro](#nomor-4---azfaro)
-- [Nomor 5 - Azfaro](#nomor-5---azfaro)
-- [Nomor 6 - Azfaro](#nomor-6---azfaro)
-- [Nomor 7 - Azfaro](#nomor-7---azfaro)
-- [Nomor 8 - Azfaro](#nomor-8---azfaro)
-- [Nomor 9 - Satya](#nomor-9---satya)
-- [Nomor 10 - Satya](#nomor-10---satya)
-- [Nomor 11 - Satya](#nomor-11---satya)
-- [Nomor 12 - Satya](#nomor-12---satya)
-- [Nomor 13 - Satya](#nomor-13---satya)
-- [Nomor 14 - Satya](#nomor-14---satya)
-- [Nomor 15 - Satya](#nomor-15---satya)
+- [Tabel Pembagian Interface & Alamat IP](#tabel-pembagian-interface--alamat-ip)
+- [Nomor 1](#nomor-1)
+- [Nomor 2](#nomor-2)
+- [Nomor 3](#nomor-3)
+- [Soal No. 4](#soal-no-4)
+- [soal no.5](#soal-no5)
+- [soal no. 6](#soal-no-6)
+- [soal no. 7](#soal-no-7)
+- [soal no.8](#soal-no8)
+- [Nomor 9](#nomor-9)
+- [Nomor 10](#nomor-10)
+- [Nomor 11](#nomor-11)
+- [Nomor 12](#nomor-12)
+- [Nomor 13](#nomor-13)
+- [Nomor 14](#nomor-14)
+- [Nomor 15](#nomor-15)
 
 ---
 
-## Informasi Topologi & Pembagian IP
+### Tabel Pembagian Interface & Alamat IP
 
-- **Kelompok:** K-37
-- **Prefix Subnet:** `10.82.x.x` (Netmask: `/24` atau `255.255.255.0`)
-- **Router Utama:** `rootkit` (6 antarmuka: `eth0` ke internet/NAT, `eth1` s/d `eth5` ke masing-masing subnet internal)
-- **DNS Resolver Awal Non-Router:** `192.168.122.1`
+Prefix ip : 10.82.x.x
 
 | Node | Antarmuka | Alamat IP | Netmask | Gateway | Subnet / Keterangan |
 |---|---|---|---|---|---|
-| **rootkit** | `eth0`<br>`eth1`<br>`eth2`<br>`eth3`<br>`eth4`<br>`eth5` | DHCP (NAT)<br>`10.82.1.1`<br>`10.82.2.1`<br>`10.82.3.1`<br>`10.82.4.1`<br>`10.82.5.1` | -<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0` | -<br>-<br>-<br>-<br>-<br>- | Router Utama (Internet Gateway)<br>Subnet eth1 (Server DNS & Web)<br>Subnet eth2 (Klien Sayap Kiri)<br>Subnet eth3 (Klien Sayap Kanan)<br>Subnet eth4 (Reverse Proxy Abbey)<br>Subnet eth5 (Reverse Proxy Penny) |
-| **prab** | `eth0` | `10.82.1.2` | `255.255.255.0` | `10.82.1.1` | DNS Master (Subnet eth1) |
-| **tedd** | `eth0` | `10.82.1.3` | `255.255.255.0` | `10.82.1.1` | DNS Slave (Subnet eth1) |
-| **obladi** | `eth0` | `10.82.1.4` | `255.255.255.0` | `10.82.1.1` | Static Web Server (Area Vault) |
-| **desmond** | `eth0` | `10.82.1.5` | `255.255.255.0` | `10.82.1.1` | Static Web Server (Area Vault) |
-| **oblada** | `eth0` | `10.82.1.6` | `255.255.255.0` | `10.82.1.1` | Dynamic Web Server (Area Core) |
-| **molly** | `eth0` | `10.82.1.7` | `255.255.255.0` | `10.82.1.1` | Dynamic Web Server (Area Core) |
-| **alpha** | `eth0` | `10.82.2.2` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (Subnet eth2) |
-| **beta** | `eth0` | `10.82.2.3` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (Subnet eth2) |
-| **gamma** | `eth0` | `10.82.2.4` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (Subnet eth2) |
-| **delta** | `eth0` | `10.82.3.2` | `255.255.255.0` | `10.82.3.1` | Klien Sayap Kanan (Subnet eth3) |
-| **epsilon** | `eth0` | `10.82.3.3` | `255.255.255.0` | `10.82.3.1` | Klien Sayap Kanan (Subnet eth3) |
-| **abbey** | `eth0` | `10.82.4.2` | `255.255.255.0` | `10.82.4.1` | Reverse Proxy Server Nginx (Subnet eth4) |
-| **penny** | `eth0` | `10.82.5.2` | `255.255.255.0` | `10.82.5.1` | Reverse Proxy Server Apache (Subnet eth5) |
+| rootkit | `eth0`<br>`eth1`<br>`eth2`<br>`eth3`<br>`eth4`<br>`eth5` | DHCP (NAT)<br>`10.82.1.1`<br>`10.82.2.1`<br>`10.82.3.1`<br>`10.82.4.1`<br>`10.82.5.1` | -<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0` | -<br>-<br>-<br>-<br>-<br>- | Router Utama (Internet Gateway)<br>Subnet eth1 (Server)<br>Subnet eth2 (Klien Sayap Kiri)<br>Subnet eth3 (Klien Sayap Kanan)<br>Subnet eth4 (Reverse Proxy Abbey)<br>Subnet eth5 (Reverse Proxy Penny) |
+| prab | `eth0` | `10.82.1.2` | `255.255.255.0` | `10.82.1.1` | DNS Server (eth1) |
+| tedd | `eth0` | `10.82.1.3` | `255.255.255.0` | `10.82.1.1` | DNS Server (eth1) |
+| obladi | `eth0` | `10.82.1.4` | `255.255.255.0` | `10.82.1.1` | Static Web Server (eth1) |
+| desmond | `eth0` | `10.82.1.5` | `255.255.255.0` | `10.82.1.1` | Static Web Server (eth1) |
+| oblada | `eth0` | `10.82.1.6` | `255.255.255.0` | `10.82.1.1` | Dynamic Web Server (eth1) |
+| molly | `eth0` | `10.82.1.7` | `255.255.255.0` | `10.82.1.1` | Dynamic Web Server (eth1) |
+| alpha | `eth0` | `10.82.2.2` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (eth2) |
+| beta | `eth0` | `10.82.2.3` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (eth2) |
+| gamma | `eth0` | `10.82.2.4` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (eth2) |
+| delta | `eth0` | `10.82.3.2` | `255.255.255.0` | `10.82.3.1` | Klien Sayap Kanan (eth3) |
+| epsilon | `eth0` | `10.82.3.3` | `255.255.255.0` | `10.82.3.1` | Klien Sayap Kanan (eth3) |
+| abbey | `eth0` | `10.82.4.2` | `255.255.255.0` | `10.82.4.1` | Reverse Proxy Server (eth4) |
+| penny | `eth0` | `10.82.5.2` | `255.255.255.0` | `10.82.5.1` | Reverse Proxy Server (eth5) |
 
 ---
 
 # Laporan Praktikum Modul 2
 
-## Nomor 1 - Satya & Azfaro
+## Nomor 1
 
 ---
 
-### Deskripsi Soal
-Intinya di nomor 1 ini kita disuruh bangun topologi sesuai gambar di modul dan ngatur IP statis beserta default gateway untuk semua entitas yang ada di jaringan.
+![Topologi Jaringan Modul 2](Assets/1-topology.png)
 
-### Langkah Konfigurasi (GNS3)
+Pada nomor 1 ini kita diminta membangun topologi sesuai gambar rancangan di modul dan mengonfigurasi IP statis beserta default gateway untuk seluruh node yang ada di jaringan.
 
-Semua konfigurasi antarmuka kita simpan di `/etc/network/interfaces` pada masing-masing node.
+Konfigurasi antarmuka disimpan di `/etc/network/interfaces` pada masing-masing node. 
 
-**1. Di Router Utama (`rootkit`):**  
-Buka console `rootkit`, masukkan konfigurasi untuk eth0 (DHCP NAT) dan eth1 s/d eth5 (IP statis 10.82.x.1):
+Seluruh konfigurasi nomor 1 ini sudah kami kumpulkan di [`scripts/soal1.sh`](scripts/soal1.sh).
 
+**Cara pakai script:**
+1. Buka console **rootkit** di GNS3, lalu copy-paste blok kode di bawah `# ROOTKIT (Router Utama)` yang ada di `scripts/soal1.sh` (isinya config interface `eth0` s/d `eth5`), kemudian jalankan `service networking restart`.
+2. Buka console masing-masing node internal (`prab`, `tedd`, `obladi`, `desmond`, `oblada`, `molly`, `alpha`, `beta`, `gamma`, `delta`, `epsilon`, `abbey`, `penny`), lalu copy-paste blok kode yang sesuai dengan nama nodenya di `scripts/soal1.sh` dan jalankan `service networking restart`.
+
+Contoh config di `rootkit`:
 ```bash
-cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet dhcp
 
@@ -101,141 +98,118 @@ auto eth5
 iface eth5 inet static
   address 10.82.5.1
   netmask 255.255.255.0
-EOF
-service networking restart
 ```
 
-**2. Di Seluruh Host Non-Router:**  
-Tiap host internal kita pasang IP statis pada `eth0` dan gateway diarahkan ke router `rootkit` (`10.82.x.1`).
-
-Contoh pada node `prab` (`10.82.1.2`):
+Contoh config di node host internal (misal `prab`):
 ```bash
-cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
   address 10.82.1.2
   netmask 255.255.255.0
   gateway 10.82.1.1
-EOF
-service networking restart
-```
-*(Lakukan hal yang sama untuk host lainnya sesuai tabel pembagian IP di atas).*
-
-### Script
-Seluruh konfigurasi nomor 1 disimpan di [`scripts/soal1.sh`](scripts/soal1.sh).
-
-### Verifikasi & Pembuktian
-Tinggal kita cek apakah IP sudah terpasang dengan perintah:
-```bash
-ip -br a
 ```
 
-![Topologi Jaringan Modul 2](Assets/1-topology.png)  
-*(Tangkapan layar topologi jaringan Modul 2)*
-
-![Bukti Konfigurasi IP Rootkit](Assets/1-rootkit-ip.png)  
-*(Tangkapan layar hasil perintah `ip -br a` pada rootkit)*
+Bukti hasil pengecekan IP dengan `ip -br a` pada `rootkit`:
+![Bukti Konfigurasi IP Rootkit](Assets/1-rootkit-ip.png)
 
 ---
 
-## Nomor 2 - Satya & Azfaro
+## Nomor 2
 
 ---
 
-### Deskripsi Soal
-Di nomor ini intinya bikin si `rootkit` bisa nyambung internet via eth0 (DHCP NAT) sekaligus jadi gerbang buat semua subnet internal kelompok kita (`10.82.0.0/16`) lewat NAT Masquerade dan aktifin `ip_forward`.
+Di nomor ini kita mengonfigurasi koneksi internet pada router utama `rootkit` melalui antarmuka `eth0` (DHCP NAT), mengaktifkan IP forwarding pada kernel Linux, dan menerapkan aturan NAT Masquerade agar seluruh node internal di subnet `10.82.0.0/16` dapat mengakses internet.
 
-### Langkah Konfigurasi (GNS3)
+Script konfigurasinya disimpan di [`scripts/soal2.sh`](scripts/soal2.sh).
 
-Buka console **`rootkit`**, lalu jalankan perintah berikut:
-
+**Cara pakai script:**
+Buka console **rootkit** di GNS3, lalu copy-paste seluruh isi skrip `scripts/soal2.sh` berikut:
 ```bash
-# 1. Ambil IP dan gateway internet lewat DHCP NAT
+# Ambil IP dan gateway internet lewat DHCP NAT
 udhcpc -i eth0
 
-# 2. Aktifkan IP forwarding di kernel Linux
+# Aktifkan IP forwarding di kernel Linux
 sysctl -w net.ipv4.ip_forward=1
 
-# 3. Pasang aturan MASQUERADE untuk semua subnet kelompok (10.82.0.0/16)
+# Pasang aturan MASQUERADE untuk semua subnet kelompok (10.82.0.0/16)
 iptables -t nat -F POSTROUTING
 iptables -t nat -A POSTROUTING -o eth0 -s 10.82.0.0/16 -j MASQUERADE
 ```
 
-### Script
-Seluruh konfigurasi nomor 2 disimpan di [`scripts/soal2.sh`](scripts/soal2.sh).
-
-### Verifikasi & Pembuktian
-Tinggal cek tabel NAT iptables dan coba ping internet dari router:
-```bash
-iptables -t nat -L -v -n
-ping -c 3 8.8.8.8
-```
-
-![Bukti Aturan NAT Masquerade](Assets/2-nat-masquerade.png)  
-*(Tangkapan layar daftar aturan iptables NAT POSTROUTING pada rootkit)*
-
-![Bukti Ping Internet Rootkit](Assets/2-rootkit-ping.png)  
-*(Tangkapan layar pengujian ping ke 8.8.8.8 dari rootkit)*
+Bukti pengecekan aturan iptables NAT dan pengujian koneksi internet dari `rootkit` (`ping 8.8.8.8`):
+![Bukti Aturan NAT Masquerade](Assets/2-nat-masquerade.png)
+![Bukti Ping Internet Rootkit](Assets/2-rootkit-ping.png)
 
 ---
 
-## Nomor 3 - Satya & Azfaro
+## Nomor 3
 
 ---
 
-### Deskripsi Soal
-Biar semua host non-router bisa ngeresolve domain sebelum DNS lokal kita bangun, kita pasang resolver awal `nameserver 192.168.122.1` di `/etc/resolv.conf` masing-masing host. Karena routing dan NAT di rootkit udah jalan, semua host otomatis bisa internetan dan saling terhubung antar-subnet.
+Di nomor ini kita memasang DNS resolver awal `nameserver 192.168.122.1` pada seluruh host non-router agar node internal bisa melakukan resolusi domain sebelum DNS server lokal di-deploy, serta memastikan routing antar-subnet sudah berjalan.
 
-### Langkah Konfigurasi (GNS3)
+Script konfigurasinya disimpan di [`scripts/soal3.sh`](scripts/soal3.sh).
 
-Di seluruh host non-router (`prab`, `tedd`, `obladi`, `desmond`, `oblada`, `molly`, `alpha`, `beta`, `gamma`, `delta`, `epsilon`, `abbey`, `penny`), jalankan:
-
+**Cara pakai script:**
+Buka console seluruh host non-router (`prab`, `tedd`, `obladi`, `desmond`, `oblada`, `molly`, `alpha`, `beta`, `gamma`, `delta`, `epsilon`, `abbey`, `penny`), lalu copy-paste perintah yang ada di `scripts/soal3.sh`:
 ```bash
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
 ```
 
-### Script
-Seluruh konfigurasi nomor 3 disimpan di [`scripts/soal3.sh`](scripts/soal3.sh).
-
-### Verifikasi & Pembuktian
-Kita uji dua hal dari salah satu klien (misalnya `alpha`):
-1. **Cek resolusi DNS dan koneksi internet:**
-   ```bash
-   ping -c 3 google.com
-   ```
-2. **Cek koneksi lintas subnet (inter-subnet routing via router rootkit):**
-   ```bash
-   ping -c 3 10.82.1.2  # Ping ke prab di Subnet 1
-   ping -c 3 10.82.3.2  # Ping ke delta di Subnet 3
-   ping -c 3 10.82.4.2  # Ping ke abbey di Subnet 4
-   ```
-
-![Bukti Ping Resolv DNS](Assets/3-dns-ping.png)  
-*(Tangkapan layar pengujian ping google.com dari klien)*
-
-![Bukti Ping Antar Subnet](Assets/3-inter-subnet-ping.png)  
-*(Tangkapan layar pengujian ping lintas subnet/switch)*
-
----
-
-## Nomor 4 - Azfaro
-
----
-
-### Deskripsi Soal
-Bangun DNS Server menggunakan BIND9 dengan `prab` sebagai authoritative master zona `k37.com` dan `tedd` sebagai slave. Pasang SOA yang menunjuk ke `prab.k37.com`, NS record untuk `prab` dan `tedd`, A record masing-masing, serta apex `k37.com` mengarah ke `penny` (`10.82.5.2`). Aktifkan notify dan allow-transfer ke `tedd`, set forwarder ke `192.168.122.1`. Terakhir, perbarui resolver di seluruh host non-router: IP prab, IP tedd, lalu 192.168.122.1.
-
-### Langkah Konfigurasi (GNS3)
-
-**1. Di DNS Master (`prab`):**  
-Install paket bind9:
+**Pengujian:**
+Dari salah satu client (misalnya `alpha`), kita lakukan dua pengujian:
+1. Uji resolusi DNS dan koneksi internet:
 ```bash
-apt update && apt install bind9 bind9-utils bind9-dnsutils -y
+ping -c 3 google.com
 ```
+![Bukti Ping Resolv DNS](Assets/3-dns-ping.png)
 
-Konfigurasi forwarder di `/etc/bind/named.conf.options`:
+2. Uji routing antar-subnet (inter-subnet routing) melewati router `rootkit`:
+- Ping ke `prab` di Subnet 1 (`10.82.1.2`)
+- Ping ke `delta` di Subnet 3 (`10.82.3.2`)
+- Ping ke `abbey` di Subnet 4 (`10.82.4.2`)
+
+```bash
+ping -c 3 10.82.1.2
+ping -c 3 10.82.3.2
+ping -c 3 10.82.4.2
+```
+![Bukti Ping Antar Subnet](Assets/3-inter-subnet-ping.png)
+
+---
+
+# Soal No. 4 
+Penjaga Direktori mulai menuliskan hukum The Mesh. Pada node prab, bangun zona <xxxx>.com sebagai authoritative dengan SOA yang menunjuk ke prab.<xxxx>.com, serta tambahkan catatan NS untuk prab.<xxxx>.com dan tedd.<xxxx>.com. Buat A record untuk prab.<xxxx>.com dan tedd.<xxxx>.com yang mengarah ke alamat IP mereka masing-masing, serta A record apex <xxxx>.com yang mengarah ke gerbang aplikasi dinamis (penny). Aktifkan fitur notify dan allow-transfer ke tedd, lalu set forwarders ke 192.168.122.1. Di node tedd, tarik zona <xxxx>.com dari master dan pastikan server menjawab secara authoritative. Setelah fondasi nama ini berdiri kokoh, perbarui urutan resolver pada seluruh Entitas non-router menjadi: IP prab, IP tedd, lalu 192.168.122.1. Verifikasi bahwa query ke domain apex maupun hostname di dalam zona dijawab dengan benar oleh prab atau tedd. 
+
+
+
+### 1. Tujuan
+Melakukan konfigurasi DNS menggunakan BIND9 dengan `prab` sebagai DNS
+Master dan `tedd` sebagai DNS Slave pada domain `k37.com`.
+Konfigurasi yang dilakukan meliputi:
+- Konfigurasi DNS Master pada `prab`
+- Konfigurasi DNS Slave pada `tedd`
+- Pembuatan zone `k37.com`
+- Konfigurasi DNS forwarder
+- Konfigurasi zone transfer dari `prab` ke `tedd`
+- Konfigurasi resolver pada host
+---
+
+### konfigurasi dns master pada prab
+Instalasi pada prab
+```bash
+apt update
+apt install bind9 bind9-utils bind9-dnsutils -y
+```
+1. Konfigurasi `named.conf.options`
+
+Pada konfigurasi ini, DNS diarahkan untuk menggunakan 192.168.122.1 sebagai DNS forwarder dan mengaktifkan recursive query, sehingga server dapat meneruskan permintaan DNS yang tidak dapat diselesaikan oleh DNS internal ke DNS forwarde
 ```bash
 root@prab:~# cat > /etc/bind/named.conf.options <<'EOF'
+
+> cat > /etc/bind/named.conf.options <<'EOF'
+
+cat > /etc/bind/named.conf.options <<'EOF'
 options {
   directory "/var/cache/bind";
 
@@ -247,24 +221,34 @@ options {
 };
 EOF
 ```
-<img src="Assets/soal4_Konfigurasi prab.png" width="500">
+<img src="Assets/soal4_Konfigurasi prab.png" width="500" height="300">
 
-Daftarkan zona `k37.com` di `/etc/bind/named.conf.local`:
+
+setelah itu kita validasi konfigurasinya memakai `named-checkconf`
+
+2. konfigurasi `named.conf.local`
+
+Tujuan konfigurasi named.conf.local adalah untuk mendaftarkan dan mengatur zone DNS k37.com pada server prab sebagai DNS Master.
 ```bash
 root@prab:~# cat > /etc/bind/named.conf.local <<'EOF'
 zone "k37.com" {
   type master;
   file "/var/cache/bind/db.k37.com";
+
   notify yes;
+
   allow-transfer {
     10.82.1.3;
   };
 };
 EOF
 ```
-<img src="Assets/soal4_configurasi local.png" width="500">
+<img src="Assets/soal4_configurasi local.png" width="500" height="300">
 
-Buat zone file `/var/cache/bind/db.k37.com`:
+### Membuat Zone File `k37.com`
+
+pembuatan zone file k37.com adalah untuk mendefinisikan informasi DNS untuk domain k37.com, seperti SOA, NS, dan A record Zone file ini menentukan `prab` sebagai DNS Master, `tedd` sebagai DNS Slave, serta mengarahkan domain `k37.com` ke IP `10.82.5.2` milik `penny
+
 ```bash
 root@prab:~# cat > /var/cache/bind/db.k37.com <<'EOF'
 $TTL 300
@@ -284,35 +268,186 @@ $TTL 300
 prab    IN  A       10.82.1.2
 tedd    IN  A       10.82.1.3
 EOF
-service bind9 restart
 ```
-<img src="Assets/soal4_konfigurasi k37.png" width="500">
+<img src="Assets/soal4_konfigurasi k37.png" width="500" height="300">
 
-Validasi zone file:
+selanjutnya kita validasi dengan `named-checkzone k37.com /var/cache/bind/db.k37.com`
+
+1. test DNS master
+masi diterminal prab jalankan perintah ini
+`dig @127.0.0.1 k37.com` `dig @127.0.0.1 prab.k37.com` dan `dig @127.0.0.1 tedd.k37.com`
+
 ```bash
-named-checkzone k37.com /var/cache/bind/db.k37.com
+root@prab:~# dig @127.0.0.1 k37.com
+
+; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 k37.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 62678
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: d05a46d26150177e010000006abb6334a3afce407f0c56ff (good)
+;; QUESTION SECTION:
+;k37.com.                       IN      A
+
+;; ANSWER SECTION:
+k37.com.                300     IN      A       10.82.5.2
+
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
+;; WHEN: Tue Sep 29 07:05:24 UTC 2026
+;; MSG SIZE  rcvd: 80
+
+root@prab:~# dig @127.0.0.1 prab.k37.com
+
+; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 prab.k37.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5990
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: c3e917c838601e78010000006abb634695cbefc2c5973032 (good)
+;; QUESTION SECTION:
+;prab.k37.com.                  IN      A
+
+;; ANSWER SECTION:
+prab.k37.com.           300     IN      A       10.82.1.2
+
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
+;; WHEN: Tue Sep 29 07:05:42 UTC 2026
+;; MSG SIZE  rcvd: 85
+
+root@prab:~# dig @127.0.0.1 tedd.k37.com
+
+; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 tedd.k37.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 61119
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 8a04fc45b5093b64010000006abb63512075f805bb27e894 (good)
+;; QUESTION SECTION:
+;tedd.k37.com.                  IN      A
+
+;; ANSWER SECTION:
+tedd.k37.com.           300     IN      A       10.82.1.3
+
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
+;; WHEN: Tue Sep 29 07:05:53 UTC 2026
+;; MSG SIZE  rcvd: 85
+
 ```
 
-**2. Di DNS Slave (`tedd`):**  
-Install bind9 dan daftarkan slave zone di `/etc/bind/named.conf.local`:
-```bash
-apt update && apt install bind9 bind9-utils bind9-dnsutils -y
+dari hasil diatas kita menemukan bahwa DNS Master prab sudah bekerja
 
+```bash
+k37.com.        A    10.82.5.2
+prab.k37.com.   A    10.82.1.2
+tedd.k37.com.   A    10.82.1.3
+```
+
+### Konfigurasi DNS Slave — tedd
+
+kami menjadikan `tedd`
+sebagai server DNS Slave untuk zone `k37.com`. Server `tedd` mengambil
+data zone dari DNS Master `prab` melalui proses zone transfer dengan
+Master pada IP `10.82.1.2`.
+
+1. buat konfigurasi
+```bash
 root@tedd:~# cat > /etc/bind/named.conf.local <<'EOF'
 zone "k37.com" {
   type slave;
+
   masters {
     10.82.1.2;
   };
+
   file "/var/cache/bind/db.k37.com";
 };
 EOF
-service bind9 restart
 ```
-<img src="Assets/soal4_konfigurasited.png" width="500">
+<img src="Assets/soal4_konfigurasited.png" width="500" height="300">
 
-**3. Update Resolver di Seluruh Host Non-Router:**  
-Jalankan di seluruh node non-router:
+2. selanjtnya kita menjalankan tes dns pada ted
+```bash
+named -c /etc/bind/named.conf
+ls -l /var/cache/bind/db.k37.com
+// tes zone ted
+dig @127.0.0.1 k37.com dan dig @127.0.0.1 prab.k37.com
+```
+```bash
+root@tedd:~# dig @127.0.0.1 k37.com
+
+; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 k37.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 62170
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: bfdc114dfca70cb1010000006abb670047604882e5d65496 (good)
+;; QUESTION SECTION:
+;k37.com.                       IN      A
+
+;; ANSWER SECTION:
+k37.com.                300     IN      A       10.82.5.2
+
+;; Query time: 2 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
+;; WHEN: Tue Sep 29 07:21:36 UTC 2026
+;; MSG SIZE  rcvd: 80
+
+root@tedd:~# dig @127.0.0.1 prab.k37.com
+
+; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 prab.k37.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 24614
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: fe422b7c6846c719010000006abb670a5a9f84cf40e6d285 (good)
+;; QUESTION SECTION:
+;prab.k37.com.                  IN      A
+
+;; ANSWER SECTION:
+prab.k37.com.           300     IN      A       10.82.1.2
+
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
+;; WHEN: Tue Sep 29 07:21:46 UTC 2026
+;; MSG SIZE  rcvd: 85
+
+root@tedd:~#
+```
+<img src="Assets/soal4_tes dns pada ted.png" width="700" height="1000">
+
+#### Konfigurasi `/etc/resolv.conf`
+
+Konfigurasi `/etc/resolv.conf` bertujuan untuk menentukan urutan DNS
+server yang digunakan oleh setiap host dalam melakukan resolusi domain.
+DNS internal dikonfigurasi dengan urutan `prab` sebagai DNS utama,
+` tedd` sebagai DNS berikutnya, dan `192.168.122.1` sebagai DNS
+forwarder terakhir.
+
+Konfigurasi yang digunakan:
+
 ```bash
 cat > /etc/resolv.conf <<'EOF'
 nameserver 10.82.1.2
@@ -320,50 +455,83 @@ nameserver 10.82.1.3
 nameserver 192.168.122.1
 EOF
 ```
+### Validasi
 
-### Script
-Seluruh konfigurasi nomor 4 disimpan di [`scripts/soal4.sh`](scripts/soal4.sh).
+Untuk membuktikan bahwa sistem DNS *master-slave* berfungsi dengan benar,
+kami melakukan validasi dari salah satu klien, yaitu **alpha**.
 
-### Verifikasi & Pembuktian
-Tes query DNS di `prab` dan `tedd`:
-```bash
-root@prab:~# dig @127.0.0.1 k37.com +short
-10.82.5.2
-root@tedd:~# dig @127.0.0.1 k37.com +short
-10.82.5.2
-```
-<img src="Assets/soal4_tes dns pada ted.png" width="600">
+Cara Validasi  
+Kami menggunakan perintah `dig` untuk melakukan query DNS ke apex domain
+(`k37.com`). Perintah `dig` digunakan untuk melihat respons DNS secara
+detail, termasuk alamat IP yang diberikan dan server DNS yang memberikan
+jawaban.
 
-Validasi dari sisi client (`alpha`):
 ```bash
 dig k37.com
 ```
-<img src="Assets/soal4_validasi dns master.png" width="600">
 
----
+hasilnya seperti ini'
 
-## Nomor 5 - Azfaro
+<img src="Assets/soal4_validasi dns master.png" width="800" height="900">
 
----
+# soal no.5
 
-### Deskripsi Soal
-Namai semua hostname sesuai glosarium topologi dan verifikasi secara system-wide. Buat domain untuk masing-masing node sesuai namanya (misal: `alpha.k37.com`) di DNS Master `prab` lengkap dengan alokasi IP-nya.
+Entitas tanpa identitas adalah anomali," pesan Rootkit. Namai semua Entitas (hostname) sesuai glosarium: rootkit, alpha, beta, gamma, delta, epsilon, prab, tedd, abbey, penny, obladi, desmond, oblada, molly, dan verifikasi bahwa setiap host mengenali hostname tersebut secara system-wide. Buat setiap domain untuk masing-masing node sesuai dengan namanya (contoh: alpha.<xxxx>.com) dan assign IP masing-masing juga. Lakukan pengecualian untuk node yang bertanggung jawab atas prab dan tedd
 
-### Langkah Konfigurasi (GNS3)
+### Konfigurasi Hostname
 
-**1. Konfigurasi Hostname di Setiap Node:**  
-Di masing-masing node kita set hostname-nya:
+Langkah pertama adalah memberikan hostname kepada setiap host sesuai dengan nama yang telah ditentukan. Konfigurasi dilakukan secara langsung pada masing-masing node dengan menyimpan hostname pada `/etc/hostname` dan menerapkannya menggunakan perintah `hostname`.
+contoh di `Alpha`
 ```bash
 echo alpha > /etc/hostname && hostname alpha
 ```
-*(Lakukan hal serupa untuk beta, gamma, delta, epsilon, abbey, penny, obladi, desmond, oblada, dan molly).*
+Node yang dikonfigurasi meliputi:
 
-Daftar IP dan hostname yang didapat:  
-<img src="Assets/soal5_Ip hostname.png" width="500">
 
-**2. Tambahkan Record ke Zone File di `prab`:**  
-Buka console `prab`, tambahkan seluruh A record node ke `/var/cache/bind/db.k37.com`:
+- alpha
+- beta
+- gamma
+- delta
+- epsilon
+- abbey
+- penny
+- obladi
+- desmond
+- oblada
+- molly
+
+Sedangkan `prab` dan `tedd` tidak dikonfigurasi ulang karena keduanya merupakan node yang bertanggung jawab sebagai NS1 dan NS2.
+
+Identifikasi IP Address Setiap Host
+
 ```bash
+hostname -I
+```
+sehingga diperoleh IP dari masing masing host
+
+<img src="Assets/soal5_Ip hostname.png" >
+
+
+| No. | Host    | IP Address  |
+| --: | ------- | ----------- |
+|   1 | rootkit | `10.82.1.1` |
+|   2 | prab    | `10.82.1.2` |
+|   3 | tedd    | `10.82.1.3` |
+|   4 | obladi  | `10.82.1.4` |
+|   5 | desmond | `10.82.1.5` |
+|   6 | oblada  | `10.82.1.6` |
+|   7 | molly   | `10.82.1.7` |
+|   8 | alpha   | `10.82.2.2` |
+|   9 | beta    | `10.82.2.3` |
+|  10 | gamma   | `10.82.2.4` |
+|  11 | delta   | `10.82.3.2` |
+|  12 | epsilon | `10.82.3.3` |
+|  13 | abbey   | `10.82.4.2` |
+|  14 | penny   | `10.82.5.2` |
+
+### Konfigurasi Domain pada DNS Master
+
+ ```bash
 root@prab:~# cat > /var/cache/bind/db.k37.com <<'EOF'
 $TTL 300
 
@@ -388,72 +556,72 @@ gamma       IN  A   10.82.2.4
 delta       IN  A   10.82.3.2
 epsilon     IN  A   10.82.3.3
 abbey       IN  A   10.82.4.2
-penny       IN  A   10.82.5.2
-obladi      IN  A   10.82.1.4
-desmond     IN  A   10.82.1.5
-oblada      IN  A   10.82.1.6
-moly        IN  A   10.82.1.7
-EOF
-service bind9 restart
 ```
-<img src="Assets/soal5_konfigurasi master.png" width="500">
+<img src="Assets/soal5_konfigurasi master.png" >
 
-### Script
-Seluruh konfigurasi nomor 5 disimpan di [`scripts/soal5.sh`](scripts/soal5.sh).
+### Validasi
 
-### Verifikasi & Pembuktian
-Coba ping domain hostname dari client `alpha`:
+Setelah konfigurasi hostname dan domain selesai dilakukan, tahap selanjutnya adalah melakukan validasi untuk memastikan bahwa domain yang telah dibuat dapat dikenali oleh client. Validasi dilakukan dari client alpha dengan menggunakan perintah ping terhadap beberapa domain yang telah dikonfigurasi pada DNS Master.
+
+Perintah yang digunakan:
 ```bash
-ping -c 2 beta.k37.com
-ping -c 2 gamma.k37.com
-ping -c 2 delta.k37.com
+ping beta.k37.com
+ping gamma.k37.com
+ping delta.k37.com
 ```
-<img src="Assets/soal5_validasi.png" width="600">
+Pengujian dilakukan untuk memastikan bahwa nama domain dapat diterjemahkan menjadi alamat IP yang sesuai dan host tujuan dapat dijangkau oleh client.
 
----
+Contoh hasil yang diperoleh:
+```bash
+PING beta.k37.com (10.82.2.3) ...
+64 bytes from 10.82.2.3: ...
+```
+![Assets/soal5_validasi.png](Assets/soal5_validasi.png)
 
-## Nomor 6 - Azfaro
+# soal no. 6
 
----
+Pastikan zone transfer berjalan, pastikan tedd telah menerima salinan zona terbaru dari prab. Nilai serial SOA di keduanya harus sama karena keduanya tidak bisa dipisahkan dan saling melengkapi.
 
-### Deskripsi Soal
-Pastikan zone transfer berjalan lancar dan salinan zona terbaru dari `prab` berhasil diterima oleh `tedd`. Nilai nomor serial SOA di kedua server DNS harus sama persis.
+Tujuannya adalah memastikan bahwa zone k37.com yang terdapat pada DNS Master dapat ditransfer ke DNS Slave dan memiliki data zone yang sama. Salah satu indikator yang digunakan adalah nilai serial pada SOA, karena serial digunakan untuk menunjukkan versi dari zone yang sedang digunakan. Ketentuan praktikum juga meminta agar zone pada prab dan tedd memiliki serial yang sama setelah proses transfer.
 
-### Langkah Konfigurasi & Verifikasi (GNS3)
+### Mengecek Serial Zone pada prab
+Untuk membuktikan bahwa tedd (DNS Slave) telah menerima salinan zone terbaru dari prab (DNS Master), kami membandingkan nomor seri SOA dari kedua server secara langsung.
 
-Tinggal bandingkan nomor serial SOA langsung dari DNS Master (`prab`) dan DNS Slave (`tedd`):
 
+Prab (DNS Master) dan Tedd (DNS Slave)
 ```bash
 dig @10.82.1.2 k37.com SOA +short
 dig @10.82.1.3 k37.com SOA +short
 ```
+Kedua perintah tersebut dapat dijalankan dari client yang sama, misalnya prab, sehingga pengujian dilakukan dengan kondisi client yang sama dan hanya server DNS tujuan yang berbeda.
 
-Output di terminal:
 ```bash
+root@prab:~# dig @127.0.0.1 k37.com SOA +short
+prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
 root@prab:~# dig @10.82.1.2 k37.com SOA +short
 prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
 root@prab:~# dig @10.82.1.3 k37.com SOA +short
 prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
 ```
-Serial keduanya sama-sama `2026092902`, membuktikan zone transfer berhasil sinkron sempurna.
+![alt text](Assets/soal6.png)
 
-<img src="Assets/soal6.png" width="600">
+# soal no. 7
+abbey dan penny sebagai gerbang utama, obladi dan desmond sebagai web statis, oblada dan molly sebagai web dinamis. Tambahkan pada zona <xxxx>.com A record untuk vault.<xxxx>.com (IP obladi & desmond), dan core.<xxxx>.com (IP oblada & molly). Tetapkan CNAME:
 
-### Script
-Seluruh konfigurasi nomor 6 disimpan di [`scripts/soal6.sh`](scripts/soal6.sh).
 
----
+www.<xxxx>.com → penny.<xxxx>.com
 
-## Nomor 7 - Azfaro
+static.<xxxx>.com → abbey.<xxxx>.com
 
----
+Verifikasi dari dua klien berbeda bahwa seluruh hostname tersebut ter-resolve ke tujuan yang benar dan konsisten.
 
-### Deskripsi Soal
-Tambahkan A record untuk `vault.k37.com` (IP obladi & desmond) dan `core.k37.com` (IP oblada & molly). Buat juga alias CNAME `www.k37.com` mengarah ke `penny.k37.com` serta `static.k37.com` mengarah ke `abbey.k37.com`. Naikkan serial number dan uji dari client.
 
-### Langkah Konfigurasi (GNS3)
 
-Di DNS Master (`prab`), kita tambahkan record baru ke file zone dan naikkan serial number SOA:
+Pada soal ini, kami membuat beberapa record DNS tambahan untuk menyediakan nama yang lebih mudah digunakan dalam mengakses layanan yang tersedia pada jaringan. Konfigurasi yang dibuat terdiri dari A Record untuk vault dan core, serta CNAME Record untuk menyediakan alias www dan static. Sesuai ketentuan soal, vault diarahkan ke server obladi dan desmond, sedangkan core diarahkan ke oblada dan molly. Selain itu, www dibuat sebagai alias dari penny, dan static dibuat sebagai alias dari abbey.
+
+### Konfigurasi di Prab (Master)
+
+Semua perubahan konfigurasi DNS dilakukan pada server master, yaitu prab. Kami menambahkan record berikut ke dalam file zone:
 
 ```bash
 cat <<EOF >> /var/cache/bind/db.k37.com
@@ -466,50 +634,53 @@ core        IN  A       10.82.1.7
 
 www         IN  CNAME   penny.k37.com.
 static      IN  CNAME   abbey.k37.com.
+
 EOF
-
-# Naikkan serial SOA dari 2026092902 jadi 2026092903
-sed -i 's/2026092902/2026092903/' /var/cache/bind/db.k37.com
-rndc reload
 ```
-<img src="Assets/soal7_1.png" width="500">
+Konfigurasi tersebut membuat vault.k37.com memiliki dua alamat IP, yaitu 10.82.1.4 dan 10.82.1.5, yang masing-masing merupakan alamat IP dari obladi dan desmond. Sementara itu, core.k37.com memiliki dua alamat IP, yaitu 10.82.1.6 dan 10.82.1.7, yang merupakan alamat IP dari oblada dan molly.
 
-### Script
-Seluruh konfigurasi nomor 7 disimpan di [`scripts/Soal7.sh`](scripts/Soal7.sh).
+Setelah melakukan perubahan pada zone file, nomor serial SOA dinaikkan dari:
 
-### Verifikasi & Pembuktian
-Jalankan query `dig` dari client (misal `gamma`):
+`2026092902` menjadi: `2026092903`
+
+Perubahan serial dilakukan menggunakan perintah:
+```bash
+sed -i 's/2026092902/2026092903/' /var/cache/bind/db.k37.com
+```
+Penaikan serial dilakukan untuk menandai bahwa terdapat perubahan pada zone k37.com, sehingga versi zone terbaru dapat dikenali oleh DNS Slave pada proses sinkronisasi.
+ ![alt text](Assets/soal7_1.png)
+
+ selanjutnya
+## Verifikasi dari Client
+
+Setelah konfigurasi DNS aktif, dilakukan pengujian dari dua client berbeda. yaitu gama dan, pengujian dilakukan dengan:
 ```bash
 dig vault.k37.com A +short
 dig core.k37.com A +short
 dig www.k37.com CNAME +short
 dig static.k37.com CNAME +short
 ```
-Hasil yang diharapkan:
-```text
-10.82.1.4
+Hasil yang diperoleh:
+```
 10.82.1.5
+10.82.1.4
 10.82.1.6
 10.82.1.7
 penny.k37.com.
 abbey.k37.com.
 ```
-<img src="Assets/soal7_2.png" width="400"> <img src="Assets/soal7_3.png" width="400">
+![alt text](Assets/soal7_2.png)dan ![alt text](Assets/soal7_3.png)
 
----
+Hasil tersebut menunjukkan bahwa vault.k37.com berhasil di-resolve ke dua alamat IP repository statis, yaitu 10.82.1.4 dan 10.82.1.5. core.k37.com berhasil di-resolve ke 10.82.1.6 dan 10.82.1.7. Selain itu, www.k37.com berhasil mengarah ke penny.k37.com, sedangkan static.k37.com mengarah ke abbey.k37.com
 
-## Nomor 8 - Azfaro
+# soal no.8
+ 
+ Di prab (ns1) deklarasikan reverse zone untuk segmen jaringan  tempat abbey, penny, area vault, dan area core berada. Di tedd (ns2) tarik reverse zone tersebut sebagai slave, isi PTR untuk keempat hostname itu agar pencarian balik IP address mengembalikan hostname yang benar, lalu pastikan query reverse untuk alamat abbey, penny, area vault, dan area core dijawab authoritative.
 
----
+### Konfigurasi di Prab (Master)
 
-### Deskripsi Soal
-Di `prab` deklarasikan reverse zone untuk segmen jaringan vault & core (`10.82.1.0/24`), abbey (`10.82.4.0/24`), dan penny (`10.82.5.0/24`). Di `tedd` tarik reverse zone tersebut sebagai slave, isi PTR record untuk hostname terkait, dan pastikan pencarian balik IP mengembalikan hostname yang benar.
-
-### Langkah Konfigurasi (GNS3)
-
-**1. Di Master (`prab`):**  
-Deklarasikan reverse zone di `/etc/bind/named.conf.local`:
-```bash
+Pertama, kami mendeklarasikan reverse zone pada file /etc/bind/named.conf.local di Prab sebagai DNS Master.
+``` bash
 cat > /etc/bind/named.conf.local <<'EOF'
 zone "k37.com" {
     type master;
@@ -540,9 +711,10 @@ zone "5.82.10.in-addr.arpa" {
 };
 EOF
 ```
+Pada konfigurasi tersebut, Prab dengan alamat IP 10.82.1.2 bertindak sebagai Master, sedangkan 10.82.1.3 merupakan alamat IP Tedd yang diberikan izin untuk melakukan zone transfer.
 
-Buat reverse zone file untuk Subnet 1 (`db.10.82.1`):
-```bash
+Selanjutnya, kami membuat file reverse zone untuk jaringan 10.82.1.0/24 dan mengisinya dengan record PTR untuk hostname yang berada pada jaringan tersebut.
+``` bash
 cat > /var/cache/bind/db.10.82.1 <<'EOF'
 $TTL 300
 @ IN SOA prab.k37.com. admin.k37.com. (
@@ -561,9 +733,16 @@ $TTL 300
 7 IN PTR molly.k37.com.
 EOF
 ```
-<img src="Assets/soal8_1.png" width="500">
+![alt text](Assets/soal8_1.png)
 
-Buat reverse zone file untuk Subnet 4 (`db.10.82.4`) dan Subnet 5 (`db.10.82.5`):
+Record PTR tersebut digunakan untuk menghubungkan alamat IP dengan hostname:
+```bash
+10.82.1.4 → obladi.k37.com
+10.82.1.5 → desmond.k37.com
+10.82.1.6 → oblada.k37.com
+10.82.1.7 → molly.k37.com
+```
+Kemudian dibuat reverse zone untuk jaringan 10.82.4.0/24 yang digunakan oleh abbey.
 ```bash
 cat > /var/cache/bind/db.10.82.4 <<'EOF'
 $TTL 300
@@ -579,7 +758,12 @@ $TTL 300
 
 2 IN PTR abbey.k37.com.
 EOF
+```
 
+
+Selanjutnya dibuat reverse zone untuk jaringan 10.82.5.0/24 yang digunakan oleh penny.
+
+```bash
 cat > /var/cache/bind/db.10.82.5 <<'EOF'
 $TTL 300
 @ IN SOA prab.k37.com. admin.k37.com. (
@@ -594,12 +778,34 @@ $TTL 300
 
 2 IN PTR penny.k37.com.
 EOF
-service bind9 restart
 ```
-
-**2. Di Slave (`tedd`):**  
-Daftarkan reverse zone tipe slave di `/etc/bind/named.conf.local`:
 ```bash
+Setelah konfigurasi Master selesai, kami melakukan pengujian menggunakan dig dengan DNS server Prab pada alamat 10.82.1.2.
+
+dig @10.82.1.2 -x 10.82.1.4 +short
+dig @10.82.1.2 -x 10.82.1.5 +short
+dig @10.82.1.2 -x 10.82.1.6 +short
+dig @10.82.1.2 -x 10.82.1.7 +short
+dig @10.82.1.2 -x 10.82.4.2 +short
+dig @10.82.1.2 -x 10.82.5.2 +short
+```
+Hasil yang diperoleh:
+```bash
+obladi.k37.com.
+desmond.k37.com.
+oblada.k37.com.
+molly.k37.com.
+abbey.k37.com.
+penny.k37.com.
+```
+Hasil tersebut menunjukkan bahwa Prab berhasil mengembalikan hostname berdasarkan alamat IP yang diberikan.
+
+### Konfigurasi di Tedd (Slave)
+
+Selanjutnya, kami mengonfigurasi Tedd sebagai DNS Slave. Tedd mengambil reverse zone dari Prab sebagai Master melalui alamat 10.82.1.2.
+
+Konfigurasi pada /etc/bind/named.conf.local di Tedd adalah:
+``` bash
 cat > /etc/bind/named.conf.local <<'EOF'
 zone "k37.com" {
     type slave;
@@ -625,55 +831,46 @@ zone "5.82.10.in-addr.arpa" {
     file "/var/cache/bind/db.10.82.5";
 };
 EOF
-service bind9 restart
 ```
-<img src="Assets/soal8_2.png" width="500">
+![Assets/soal8_2.png](Assets/soal8_2.png)
 
-### Script
-Seluruh konfigurasi nomor 8 disimpan di [`scripts/soal8.sh`](scripts/soal8.sh).
-
-### Verifikasi & Pembuktian
-Uji query reverse DNS (PTR) dari client atau master:
+Kemudian dilakukan pengujian reverse DNS melalui DNS Slave pada alamat 10.82.1.3.
 ```bash
-dig @10.82.1.2 -x 10.82.1.4 +short
-dig @10.82.1.2 -x 10.82.1.5 +short
-dig @10.82.1.2 -x 10.82.4.2 +short
-dig @10.82.1.2 -x 10.82.5.2 +short
+dig @10.82.1.3 -x 10.82.1.4 +short
+dig @10.82.1.3 -x 10.82.1.5 +short
+dig @10.82.1.3 -x 10.82.1.6 +short
+dig @10.82.1.3 -x 10.82.1.7 +short
+dig @10.82.1.3 -x 10.82.4.2 +short
+dig @10.82.1.3 -x 10.82.5.2 +short
 ```
-Hasil yang diharapkan:
-```text
+Hasil yang diperoleh:
+```
 obladi.k37.com.
 desmond.k37.com.
+oblada.k37.com.
+molly.k37.com.
 abbey.k37.com.
 penny.k37.com.
 ```
+---
+
+## Nomor 9
 
 ---
 
-## Nomor 9 - Satya
+Diminta untuk menjalankan layanan web statis menggunakan Apache di area vault (`obladi` dan `desmond`). Direktori `/arsip/` harus dibuka dengan fitur autoindex (directory listing) aktif agar seluruh file di dalamnya bisa dilihat langsung dari browser/curl melalui hostname `vault.k37.com/arsip/`.
 
----
+Script konfigurasi disimpan di [`scripts/soal9.sh`](scripts/soal9.sh).
 
-### Deskripsi Soal
-Di area vault (`obladi` dan `desmond`), pasang web server statis pakai Apache. Buka folder direktori `/arsip/` dengan fitur autoindex (directory listing) aktif biar seluruh file di dalamnya bisa ditelusuri lewat browser/curl. Akses pengujian wajib lewat hostname (`vault.k37.com/arsip/`), bukan IP address.
+**Cara pakai script:**
+1. Buka console **obladi**, copy-paste blok kode di bawah `# ==== OBLADI ====` yang ada di `scripts/soal9.sh`.
+2. Buka console **desmond**, copy-paste blok kode di bawah `# ==== DESMOND ====` yang ada di `scripts/soal9.sh`.
 
-### Langkah Konfigurasi (GNS3)
-
-Jalankan perintah ini di console **`obladi`** dan **`desmond`**:
-
-```bash
-# 1. Install Apache2
-apt-get update && apt-get install -y apache2
-
-# 2. Siapkan folder /arsip/ dan beberapa file dummy (tanpa index.html)
-mkdir -p /var/www/vault/arsip
-echo "Arsip dokumen rahasia 1" > /var/www/vault/arsip/dokumen1.txt
-echo "Laporan inventaris data statis K-37" > /var/www/vault/arsip/inventaris.pdf
-chown -R www-data:www-data /var/www/vault
-chmod -R 755 /var/www/vault
-
-# 3. Konfigurasi VirtualHost dengan Options +Indexes khusus untuk /arsip
-cat <<EOF > /etc/apache2/sites-available/vault.conf
+Di dalam script tersebut dilakukan:
+- Instalasi `apache2`.
+- Pembuatan direktori `/var/www/vault/arsip` beserta file dummy (`dokumen1.txt`, `inventaris.pdf`, dll) tanpa membuat `index.html` agar autoindex berjalan.
+- Pembuatan VirtualHost di `/etc/apache2/sites-available/vault.conf` dengan direktif `Options +Indexes` khusus untuk direktori `/var/www/vault/arsip`:
+```apache
 <VirtualHost *:80>
     ServerName vault.k37.com
     ServerAlias obladi.k37.com desmond.k37.com
@@ -691,106 +888,42 @@ cat <<EOF > /etc/apache2/sites-available/vault.conf
         Require all granted
     </Directory>
 
-    ErrorLog \${APACHE_LOG_DIR}/vault_error.log
-    CustomLog \${APACHE_LOG_DIR}/vault_access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/vault_error.log
+    CustomLog ${APACHE_LOG_DIR}/vault_access.log combined
 </VirtualHost>
-EOF
-
-# 4. Aktifkan modul autoindex dan site vault
-a2enmod autoindex dir
-a2dissite 000-default.conf
-a2ensite vault.conf
-service apache2 restart
 ```
+- Pengaktifan modul `autoindex`, `dir`, enable site `vault.conf`, lalu restart service apache2.
 
-### Script
-Seluruh konfigurasi nomor 9 disimpan di [`scripts/soal9.sh`](scripts/soal9.sh).
-
-### Verifikasi & Pembuktian
-Dari salah satu client (misal `gamma`, `alpha`, atau `delta`), uji akses lewat hostname:
-
+**Pengujian:**
+Pengujian dilakukan dari client (misal `gamma` atau `delta`) menggunakan hostname:
 ```bash
-# Cek respons header (HTTP 200 OK)
+# Cek header status 200 OK
 curl -i http://vault.k37.com/arsip/
 
 # Cek tampilan autoindex daftar file
 curl -s http://vault.k37.com/arsip/
 ```
-
-Output terminal yang diharapkan:
-```html
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
- <head>
-  <title>Index of /arsip</title>
- </head>
- <body>
-<h1>Index of /arsip</h1>
-<table>
-  ...
-  <tr><td><a href="dokumen1.txt">dokumen1.txt</a></td>...</tr>
-  <tr><td><a href="inventaris.pdf">inventaris.pdf</a></td>...</tr>
-</table>
-</body></html>
-```
+Respons menampilkan HTML directory listing `Index of /arsip` dengan daftar berkas yang tersedia di dalamnya.
 
 ---
 
-## Nomor 10 - Satya
+## Nomor 10
 
 ---
 
-### Deskripsi Soal
-Di area core (`oblada` dan `molly`), pasang layanan web dinamis PHP-FPM pakai Nginx. Buat aplikasi sederhana beranda (`index.php`) dan profil (`profil.php`). Pasang aturan rewrite Nginx biar akses ke `/profil` bisa dibuka dengan URL bersih tanpa ekstensi `.php`. Akses pengujian wajib lewat hostname.
+Diminta untuk menjalankan layanan web dinamis PHP-FPM menggunakan Nginx di area core (`oblada` dan `molly`). Buat halaman beranda (`index.php`) dan halaman profil (`profil.php`), serta pasang aturan rewrite agar akses ke `/profil` dapat dibuka dengan clean URL (tanpa ekstensi `.php`) melalui hostname `core.k37.com/profil`.
 
-### Langkah Konfigurasi (GNS3)
+Script konfigurasi disimpan di [`scripts/soal10.sh`](scripts/soal10.sh).
 
-Jalankan perintah ini di console **`oblada`** dan **`molly`**:
+**Cara pakai script:**
+1. Buka console **oblada**, copy-paste blok kode di bawah `# ==== OBLADA ====` yang ada di `scripts/soal10.sh`.
+2. Buka console **molly**, copy-paste blok kode di bawah `# ==== MOLLY ====` yang ada di `scripts/soal10.sh`.
 
-```bash
-# 1. Install Nginx dan PHP-FPM
-apt-get update && apt-get install -y nginx php-fpm
-
-# 2. Pastikan service PHP-FPM jalan dan ambil socket-nya
-service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
-PHP_SOCK=$(ls -1 /run/php/php*-fpm.sock 2>/dev/null | head -n 1)
-[ -z "$PHP_SOCK" ] && PHP_SOCK="/run/php/php8.2-fpm.sock"
-
-# 3. Buat folder dan file beranda & profil
-mkdir -p /var/www/core
-
-cat <<'EOF' > /var/www/core/index.php
-<!DOCTYPE html>
-<html>
-<head><title>Core - Beranda</title></head>
-<body>
-    <h1>Selamat Datang di Beranda Core Area</h1>
-    <p>Node: <?php echo gethostname(); ?></p>
-    <p><a href="/profil">Menuju Halaman Profil</a></p>
-</body>
-</html>
-EOF
-
-cat <<'EOF' > /var/www/core/profil.php
-<!DOCTYPE html>
-<html>
-<head><title>Core - Profil</title></head>
-<body>
-    <h1>Halaman Profil - Core Network K-37</h1>
-    <p>Node Server: <?php echo gethostname(); ?> (<?php echo $_SERVER['SERVER_ADDR']; ?>)</p>
-    <p>Host Header: <?php echo htmlspecialchars($_SERVER['HTTP_HOST'] ?? '-'); ?></p>
-    <p>Client IP (X-Real-IP): <?php echo htmlspecialchars($_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR']); ?></p>
-    <p>PHP Version: <?php echo phpversion(); ?></p>
-    <p><a href="/">Kembali ke Beranda</a></p>
-</body>
-</html>
-EOF
-
-chown -R www-data:www-data /var/www/core
-chmod -R 755 /var/www/core
-
-# 4. Konfigurasi Nginx Server Block dengan rewrite /profil
-cat <<EOF > /etc/nginx/sites-available/core
+Di dalam script tersebut dilakukan:
+- Instalasi `nginx` dan `php-fpm`.
+- Pembuatan direktori DocumentRoot `/var/www/core` beserta file `index.php` dan `profil.php` yang menampilkan informasi dinamis server (hostname, alamat IP, versi PHP).
+- Konfigurasi server block Nginx di `/etc/nginx/sites-available/core` dengan aturan rewrite:
+```nginx
 server {
     listen 80;
     server_name core.k37.com oblada.k37.com molly.k37.com;
@@ -802,242 +935,97 @@ server {
     rewrite ^/profil/?$ /profil.php last;
 
     location / {
-        try_files \$uri \$uri/ \$uri.php?\$args =404;
+        try_files $uri $uri/ $uri.php?$args =404;
     }
 
     location ~ \.php$ {
         include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-        fastcgi_pass unix:$PHP_SOCK;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         fastcgi_index index.php;
     }
-
-    location ~ /\.ht {
-        deny all;
-    }
 }
-EOF
-
-ln -sf /etc/nginx/sites-available/core /etc/nginx/sites-enabled/core
-rm -f /etc/nginx/sites-enabled/default
-nginx -t && service nginx restart
 ```
+- Menghubungkan konfigurasi ke `sites-enabled`, menghapus konfigurasi `default`, dan restart nginx.
 
-### Script
-Seluruh konfigurasi nomor 10 disimpan di [`scripts/soal10.sh`](scripts/soal10.sh).
-
-### Verifikasi & Pembuktian
-Dari client (`gamma` atau `delta`), uji akses beranda dan profil URL bersih:
-
+**Pengujian:**
+Pengujian dilakukan dari client (misal `gamma` atau `delta`) menggunakan hostname:
 ```bash
-# 1. Akses Beranda
+# Akses beranda
 curl -i http://core.k37.com/
 
-# 2. Akses Clean URL /profil (tanpa .php)
+# Akses halaman profil dengan clean URL tanpa .php
 curl -i http://core.k37.com/profil
-curl -s http://core.k37.com/profil
 ```
-
-Output terminal yang diharapkan (`curl -i http://core.k37.com/profil`):
-```text
-HTTP/1.1 200 OK
-Server: nginx/...
-Content-Type: text/html; charset=UTF-8
-
-<!DOCTYPE html>
-<html>
-<head><title>Core - Profil</title></head>
-<body>
-    <h1>Halaman Profil - Core Network K-37</h1>
-    <p>Node Server: oblada (10.82.1.6)</p>
-    <p>Host Header: core.k37.com</p>
-    ...
-```
+Hasil request ke `http://core.k37.com/profil` berhasil mengembalikan kode status `200 OK` dan konten dieksekusi secara dinamis oleh PHP-FPM.
 
 ---
 
-## Nomor 11 - Satya
+## Nomor 11
 
 ---
 
-### Deskripsi Soal
-Konfigurasikan **Penny** (Apache) sebagai reverse proxy & load balancer ke area vault (`obladi` & `desmond`). Sementara itu, konfigurasikan **Abbey** (Nginx) sebagai reverse proxy & load balancer ke area core (`oblada` & `molly`). Keduanya wajib meneruskan header **Host** dan **X-Real-IP** ke backend. Buktikan distribusi lalu lintasnya.
+Diminta untuk mengonfigurasi **Penny** (Apache) sebagai reverse proxy & load balancer menuju node di area vault (`obladi` & `desmond`), dan mengonfigurasi **Abbey** (Nginx) sebagai reverse proxy & load balancer menuju node di area core (`oblada` & `molly`). Kedua reverse proxy ini wajib meneruskan header `Host` dan `X-Real-IP` ke backend.
 
-### Langkah Konfigurasi (GNS3)
+Script konfigurasi disimpan di [`scripts/soal11.sh`](scripts/soal11.sh).
 
-**1. Di Node `penny` (Apache Reverse Proxy):**
+**Cara pakai script:**
+1. Buka console **penny**, copy-paste blok kode di bawah `# ==== PENNY ====` pada `scripts/soal11.sh`.
+   Skrip ini mengaktifkan modul `proxy`, `proxy_http`, `proxy_balancer`, `lbmethod_byrequests`, dan `headers` di Apache, lalu memasang cluster balancer `balancer://vaultcluster` ke IP `10.82.1.4:80` dan `10.82.1.5:80` dengan `ProxyPreserveHost On` dan `RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"`.
+2. Buka console **abbey**, copy-paste blok kode di bawah `# ==== ABBEY ====` pada `scripts/soal11.sh`.
+   Skrip ini memasang upstream `core_backend` di Nginx ke IP `10.82.1.6:80` dan `10.82.1.7:80` serta meneruskan header `proxy_set_header Host $host;` dan `proxy_set_header X-Real-IP $remote_addr;`.
+
+**Pengujian:**
+Dari client (misal `gamma`), lakukan pengujian distribusi traffic:
+1. Uji load balancing Penny ke area vault:
 ```bash
-apt-get update && apt-get install -y apache2
-a2enmod proxy proxy_http proxy_balancer lbmethod_byrequests headers
-
-cat <<EOF > /etc/apache2/sites-available/penny.conf
-<VirtualHost *:80>
-    ServerName penny.k37.com
-    ServerAlias www.k37.com k37.com
-
-    <Proxy balancer://vaultcluster>
-        BalancerMember http://10.82.1.4:80
-        BalancerMember http://10.82.1.5:80
-        ProxySet lbmethod=byrequests
-    </Proxy>
-
-    ProxyPreserveHost On
-    RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
-
-    ProxyPass / balancer://vaultcluster/
-    ProxyPassReverse / balancer://vaultcluster/
-
-    ErrorLog \${APACHE_LOG_DIR}/penny_error.log
-    CustomLog \${APACHE_LOG_DIR}/penny_access.log combined
-</VirtualHost>
-EOF
-
-a2dissite 000-default.conf
-a2ensite penny.conf
-service apache2 restart
+for i in {1..4}; do curl -s http://penny.k37.com/ | grep -i "Server"; done
 ```
+Respons bergantian dijawab oleh `Obladi` dan `Desmond`.
 
-**2. Di Node `abbey` (Nginx Reverse Proxy):**
+2. Uji load balancing Abbey ke area core dan cek forwarding header:
 ```bash
-apt-get update && apt-get install -y nginx
-
-cat <<EOF > /etc/nginx/sites-available/abbey
-upstream core_backend {
-    server 10.82.1.6:80;
-    server 10.82.1.7:80;
-}
-
-server {
-    listen 80;
-    server_name abbey.k37.com static.k37.com;
-
-    location / {
-        proxy_pass http://core_backend;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    }
-}
-EOF
-
-ln -sf /etc/nginx/sites-available/abbey /etc/nginx/sites-enabled/abbey
-rm -f /etc/nginx/sites-enabled/default
-nginx -t && service nginx restart
+for i in {1..4}; do
+    echo "--- Request $i ---"
+    curl -s http://abbey.k37.com/profil | grep -E "Node Server|Host Header|Client IP"
+done
 ```
-
-### Script
-Seluruh konfigurasi nomor 11 disimpan di [`scripts/soal11.sh`](scripts/soal11.sh).
-
-### Verifikasi & Pembuktian
-Uji distribusi trafik dari client (`gamma` atau `delta`):
-
-1. **Uji Penny (Apache Balancer ke Vault):**
-   ```bash
-   for i in {1..4}; do curl -s http://penny.k37.com/ | grep -i "Server"; done
-   ```
-   Respons bergantian antara `Obladi` dan `Desmond`.
-
-2. **Uji Abbey (Nginx Balancer ke Core + Forwarding Header):**
-   ```bash
-   for i in {1..4}; do
-       echo "--- Request $i ---"
-       curl -s http://abbey.k37.com/profil | grep -E "Node Server|Host Header|Client IP"
-   done
-   ```
-   Output terminal yang diharapkan:
-   ```text
-   --- Request 1 ---
-   <p>Node Server: oblada (10.82.1.6)</p>
-   <p>Host Header: abbey.k37.com</p>
-   <p>Client IP (X-Real-IP): 10.82.2.4</p>
-   --- Request 2 ---
-   <p>Node Server: molly (10.82.1.7)</p>
-   <p>Host Header: abbey.k37.com</p>
-   <p>Client IP (X-Real-IP): 10.82.2.4</p>
-   ```
+Respons bergantian dijawab oleh `oblada` dan `molly`, serta header `Host` tercatat `abbey.k37.com` dan `Client IP` mencatat IP asli client (`10.82.2.4`).
 
 ---
 
-## Nomor 12 - Satya
+## Nomor 12
 
 ---
 
-### Deskripsi Soal
-Terdapat ruang khusus di `penny` yang menyimpan dokumen rahasia sindikat pada path `/admin`. Pasang proteksi **HTTP Basic Authentication** untuk path `/admin`. Akses tanpa kredensial atau password salah harus ditolak (401), dan hanya boleh masuk jika menggunakan:
+Terdapat dokumen rahasia pada direktori `/admin` di node **Penny**. Kita diminta memasang perlindungan **Basic Authentication** pada path `/admin` tersebut. Akses tanpa kredensial atau password salah harus ditolak (401), dan hanya boleh diakses menggunakan:
 - **Username:** `prabs`
 - **Password:** `pakar_pinter_jadi_gob***`
 
-### Langkah Konfigurasi (GNS3)
+Script konfigurasi disimpan di [`scripts/soal12.sh`](scripts/soal12.sh).
 
-Buka console node **`penny`**, lalu jalankan:
+**Cara pakai script:**
+Buka console **penny**, lalu copy-paste seluruh isi `scripts/soal12.sh`.
 
-```bash
-# 1. Install apache2-utils untuk perintah htpasswd
-apt-get update && apt-get install -y apache2-utils
+Di dalam script tersebut dilakukan:
+- Instalasi `apache2-utils`.
+- Pembuatan direktori rahasia `/var/www/penny/admin` dan file `index.html`.
+- Pembuatan file kredensial password terenkripsi via `htpasswd -bc /etc/apache2/.htpasswd prabs 'pakar_pinter_jadi_gob***'`.
+- Konfigurasi VirtualHost Penny dengan menambahkan `ProxyPass /admin !` agar path `/admin` dikecualikan dari reverse proxy (diproses lokal oleh Penny) dan diproteksi dengan `AuthType Basic`:
+```apache
+ProxyPass /admin !
+Alias /admin /var/www/penny/admin
 
-# 2. Buat folder lokal /admin dan file dokumen rahasianya di Penny
-mkdir -p /var/www/penny/admin
-cat <<'EOF' > /var/www/penny/admin/index.html
-<!DOCTYPE html>
-<html>
-<head><title>Dokumen Rahasia</title></head>
-<body>
-    <h1>Ruang Khusus Sindikat - Penny</h1>
-    <p>Selamat datang, Agen <strong>prabs</strong>!</p>
-</body>
-</html>
-EOF
-chown -R www-data:www-data /var/www/penny
-chmod -R 755 /var/www/penny
-
-# 3. Buat file kredensial .htpasswd
-htpasswd -bc /etc/apache2/.htpasswd prabs 'pakar_pinter_jadi_gob***'
-chmod 640 /etc/apache2/.htpasswd
-chown root:www-data /etc/apache2/.htpasswd
-
-# 4. Tambahkan proteksi di VirtualHost Penny (kecualikan /admin dari reverse proxy)
-cat <<EOF > /etc/apache2/sites-available/penny.conf
-<VirtualHost *:80>
-    ServerName penny.k37.com
-    ServerAlias www.k37.com k37.com
-
-    DocumentRoot /var/www/penny
-
-    # Kecualikan /admin agar ditangani lokal oleh Penny
-    ProxyPass /admin !
-    Alias /admin /var/www/penny/admin
-
-    <Location /admin>
-        AuthType Basic
-        AuthName "Dokumen Rahasia Sindikat"
-        AuthUserFile /etc/apache2/.htpasswd
-        Require valid-user
-    </Location>
-
-    # Balancer cluster ke Area Vault
-    <Proxy balancer://vaultcluster>
-        BalancerMember http://10.82.1.4:80
-        BalancerMember http://10.82.1.5:80
-        ProxySet lbmethod=byrequests
-    </Proxy>
-
-    ProxyPreserveHost On
-    RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
-
-    ProxyPass / balancer://vaultcluster/
-    ProxyPassReverse / balancer://vaultcluster/
-</VirtualHost>
-EOF
-
-service apache2 restart
+<Location /admin>
+    AuthType Basic
+    AuthName "Dokumen Rahasia Sindikat"
+    AuthUserFile /etc/apache2/.htpasswd
+    Require valid-user
+</Location>
 ```
 
-### Script
-Seluruh konfigurasi nomor 12 disimpan di [`scripts/soal12.sh`](scripts/soal12.sh).
-
-### Verifikasi & Pembuktian
-Dari client (`gamma` atau `alpha`), uji akses dengan 3 skenario:
-
+**Pengujian:**
+Dari client (misal `gamma` atau `alpha`), lakukan pengujian dengan 3 kondisi:
 ```bash
 # 1. Tanpa kredensial -> Ditolak (HTTP 401 Unauthorized)
 curl -i http://penny.k37.com/admin
@@ -1048,368 +1036,108 @@ curl -i -u prabs:passwordsalah http://penny.k37.com/admin
 # 3. Kredensial benar -> Berhasil (HTTP 200 OK)
 curl -i -u prabs:pakar_pinter_jadi_gob*** http://penny.k37.com/admin
 ```
-
-Output terminal saat kredensial benar:
-```text
-HTTP/1.1 200 OK
-Date: ...
-Server: Apache/...
-Content-Type: text/html; charset=UTF-8
-
-<!DOCTYPE html>
-<html>
-<head><title>Dokumen Rahasia</title></head>
-<body>
-    <h1>Ruang Khusus Sindikat - Penny</h1>
-    <p>Selamat datang, Agen <strong>prabs</strong>!</p>
-</body>
-</html>
-```
+Saat kredensial benar, server mengembalikan status `HTTP/1.1 200 OK` dan menampilkan isi dokumen rahasia.
 
 ---
 
-## Nomor 13 - Satya
+## Nomor 13
 
 ---
 
-### Deskripsi Soal
-Setiap entitas dari luar harus memanggil gerbang dengan nama kanoniknya:
-- Akses ke **IP penny** (`10.82.5.2`) atau domain **`penny.k37.com`** harus di-redirect permanen (**status code 301**) ke **`www.k37.com`**.
-- Akses ke **IP abbey** (`10.82.4.2`) atau domain **`abbey.k37.com`** harus di-redirect sementara (**status code 302**) ke **`static.k37.com`**.
+Diminta agar setiap entitas memanggil gerbang menggunakan nama kanoniknya:
+- Akses ke IP Penny (`10.82.5.2`) atau domain `penny.k37.com` harus di-redirect permanen (**HTTP 301**) ke `www.k37.com`.
+- Akses ke IP Abbey (`10.82.4.2`) atau domain `abbey.k37.com` harus di-redirect sementara (**HTTP 302**) ke `static.k37.com`.
 
-### Langkah Konfigurasi (GNS3)
+Script konfigurasi disimpan di [`scripts/soal13.sh`](scripts/soal13.sh).
 
-**1. Di Node `penny` (Apache Redirect 301):**  
-Aktifkan modul rewrite, lalu pisahkan VirtualHost untuk redirect 301 dan VirtualHost kanonik `www.k37.com`:
+**Cara pakai script:**
+1. Buka console **penny**, copy-paste blok `# ==== PENNY ====` pada `scripts/soal13.sh`.
+   Skrip ini mengaktifkan `mod_rewrite` di Apache, lalu menambahkan VirtualHost khusus port 80 untuk IP `10.82.5.2` dan domain `penny.k37.com` yang me-rewrite seluruh request ke `http://www.k37.com$1` dengan flag `[R=301,L]`.
+2. Buka console **abbey**, copy-paste blok `# ==== ABBEY ====` pada `scripts/soal13.sh`.
+   Skrip ini menambahkan server block default di Nginx untuk menangkap IP `10.82.4.2` dan domain `abbey.k37.com`, lalu me-redirect-nya menggunakan `return 302 http://static.k37.com$request_uri;`.
+
+**Pengujian:**
+Dari client (misal `gamma`):
 ```bash
-a2enmod rewrite
-
-cat <<EOF > /etc/apache2/sites-available/penny.conf
-# VirtualHost 1: Redirect 301 untuk IP 10.82.5.2 & penny.k37.com
-<VirtualHost *:80>
-    ServerName penny.k37.com
-    ServerAlias 10.82.5.2
-
-    RewriteEngine On
-    RewriteRule ^(.*)$ http://www.k37.com\$1 [R=301,L]
-</VirtualHost>
-
-# VirtualHost 2: Host Kanonik www.k37.com
-<VirtualHost *:80>
-    ServerName www.k37.com
-    ServerAlias k37.com
-    DocumentRoot /var/www/penny
-
-    ProxyPass /admin !
-    Alias /admin /var/www/penny/admin
-
-    <Location /admin>
-        AuthType Basic
-        AuthName "Dokumen Rahasia Sindikat"
-        AuthUserFile /etc/apache2/.htpasswd
-        Require valid-user
-    </Location>
-
-    <Proxy balancer://vaultcluster>
-        BalancerMember http://10.82.1.4:80
-        BalancerMember http://10.82.1.5:80
-        ProxySet lbmethod=byrequests
-    </Proxy>
-
-    ProxyPreserveHost On
-    RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
-    ProxyPass / balancer://vaultcluster/
-    ProxyPassReverse / balancer://vaultcluster/
-</VirtualHost>
-EOF
-service apache2 restart
-```
-
-**2. Di Node `abbey` (Nginx Redirect 302):**  
-Buat server block default untuk menangkap IP `10.82.4.2` dan domain `abbey.k37.com`, lalu `return 302` ke `static.k37.com`:
-```bash
-cat <<EOF > /etc/nginx/sites-available/abbey
-upstream core_backend {
-    server 10.82.1.6:80;
-    server 10.82.1.7:80;
-}
-
-# Redirect 302 Sementara
-server {
-    listen 80 default_server;
-    server_name abbey.k37.com 10.82.4.2;
-    return 302 http://static.k37.com\$request_uri;
-}
-
-# Host Kanonik
-server {
-    listen 80;
-    server_name static.k37.com;
-
-    location / {
-        proxy_pass http://core_backend;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    }
-}
-EOF
-nginx -t && service nginx restart
-```
-
-### Script
-Seluruh konfigurasi nomor 13 disimpan di [`scripts/soal13.sh`](scripts/soal13.sh).
-
-### Verifikasi & Pembuktian
-Dari client, uji status code respons:
-
-```bash
-# 1. Cek Redirect 301 Penny (Harus 301 Moved Permanently -> Location: http://www.k37.com/)
+# 1. Uji redirect 301 Penny (hasil: HTTP/1.1 301 Moved Permanently -> Location: http://www.k37.com/)
 curl -i http://penny.k37.com/
 curl -i http://10.82.5.2/
 
-# 2. Cek Redirect 302 Abbey (Harus 302 Found / Moved Temporarily -> Location: http://static.k37.com/)
+# 2. Uji redirect 302 Abbey (hasil: HTTP/1.1 302 Moved Temporarily -> Location: http://static.k37.com/)
 curl -i http://abbey.k37.com/
 curl -i http://10.82.4.2/
 
-# 3. Uji Follow Redirect
+# 3. Uji follow redirect sampai 200 OK
 curl -L http://penny.k37.com/
 curl -L http://abbey.k37.com/profil
 ```
 
-Output terminal saat cek redirect 301 Penny:
-```text
-HTTP/1.1 301 Moved Permanently
-Date: ...
-Location: http://www.k37.com/
-Content-Type: text/html; charset=iso-8859-1
-```
+---
 
-Output terminal saat cek redirect 302 Abbey:
-```text
-HTTP/1.1 302 Moved Temporarily
-Server: nginx/...
-Location: http://static.k37.com/
-Connection: keep-alive
-```
+## Nomor 14
 
 ---
 
-## Nomor 14 - Satya
+Diminta untuk memastikan bahwa file *access log* pada setiap server web di area vault (`obladi`, `desmond`) dan area core (`oblada`, `molly`) mencatat alamat IP asli client pengunjung yang diteruskan oleh proxy, bukan mencatat IP dari Penny (`10.82.5.2`) atau Abbey (`10.82.4.2`).
+
+Script konfigurasi disimpan di [`scripts/soal14.sh`](scripts/soal14.sh).
+
+**Cara pakai script:**
+1. Buka console **obladi**, copy-paste blok `# ==== OBLADI ====` dari `scripts/soal14.sh`. Lakukan hal yang sama pada **desmond**.
+   Skrip ini mengaktifkan modul `remoteip` di Apache (`a2enmod remoteip`), mengatur `RemoteIPHeader X-Real-IP`, menetapkan IP Penny sebagai `RemoteIPInternalProxy`, dan mengubah format log `%h` menjadi `%a` pada `/etc/apache2/apache2.conf`.
+2. Buka console **oblada**, copy-paste blok `# ==== OBLADA ====` dari `scripts/soal14.sh`. Lakukan hal yang sama pada **molly**.
+   Skrip ini menambahkan parameter `set_real_ip_from 10.82.4.2;` dan `real_ip_header X-Real-IP;` pada server block Nginx di `/etc/nginx/sites-available/core`.
+
+**Pengujian:**
+1. Dari client `gamma` (IP `10.82.2.4`), kirim request ke kedua domain:
+```bash
+curl -s http://www.k37.com/arsip/
+curl -s http://static.k37.com/profil
+```
+2. Cek access log di server backend:
+- Di `obladi` atau `desmond` (Apache):
+  ```bash
+  tail -n 5 /var/log/apache2/vault_access.log
+  ```
+  Kolom pertama mencatat IP `10.82.2.4` (IP asli client `gamma`).
+- Di `oblada` atau `molly` (Nginx):
+  ```bash
+  tail -n 5 /var/log/nginx/access.log
+  ```
+  Kolom `$remote_addr` mencatat IP `10.82.2.4` (IP asli client `gamma`).
 
 ---
 
-### Deskripsi Soal
-Pastikan *access log* pada setiap server web di **area vault** (`obladi`, `desmond`) maupun **area core** (`oblada`, `molly`) mencatat alamat **IP asli client**, bukan mencatat IP proxy dari Penny (`10.82.5.2`) atau Abbey (`10.82.4.2`).
-
-### Langkah Konfigurasi (GNS3)
-
-**1. Di Server Area Vault (`obladi` & `desmond` - Apache):**  
-Aktifkan modul `mod_remoteip`, set IP Penny sebagai trusted proxy, dan ubah `%h` jadi `%a` pada format log:
-```bash
-a2enmod remoteip
-
-cat <<EOF > /etc/apache2/conf-available/remoteip.conf
-RemoteIPHeader X-Real-IP
-RemoteIPInternalProxy 10.82.5.2
-RemoteIPInternalProxy 10.82.0.0/16
-EOF
-a2enconf remoteip
-
-sed -i 's/%h %l %u %t/%a %l %u %t/' /etc/apache2/apache2.conf
-service apache2 restart
-```
-
-**2. Di Server Area Core (`oblada` & `molly` - Nginx):**  
-Tambahkan konfigurasi `set_real_ip_from` dan `real_ip_header` pada blok server `/etc/nginx/sites-available/core`:
-```bash
-sed -i '/listen 80;/a \    set_real_ip_from 10.82.4.2;\n    set_real_ip_from 10.82.0.0/16;\n    real_ip_header X-Real-IP;\n    real_ip_recursive on;' /etc/nginx/sites-available/core
-nginx -t && service nginx restart
-```
-
-### Script
-Seluruh konfigurasi nomor 14 disimpan di [`scripts/soal14.sh`](scripts/soal14.sh).
-
-### Verifikasi & Pembuktian
-1. Dari client (`gamma` IP `10.82.2.4`), kirim request ke kedua gerbang:
-   ```bash
-   curl -s http://www.k37.com/arsip/
-   curl -s http://static.k37.com/profil
-   ```
-2. Cek log di backend Area Vault (`obladi` / `desmond`):
-   ```bash
-   tail -n 5 /var/log/apache2/vault_access.log
-   ```
-   **Hasil:** Kolom IP mencatat `10.82.2.4` (IP asli client, bukan `10.82.5.2` milik Penny).
-
-3. Cek log di backend Area Core (`oblada` / `molly`):
-   ```bash
-   tail -n 5 /var/log/nginx/access.log
-   ```
-   **Hasil:** Kolom IP mencatat `10.82.2.4` (IP asli client, bukan `10.82.4.2` milik Abbey).
+## Nomor 15
 
 ---
 
-## Nomor 15 - Satya
+Diminta untuk membuat jalur khusus yang berdiri sendiri:
+- Pada **Penny**: buat rute `/eternal` yang menyajikan direktori `/var/www/eternal` dan dapat mengeksekusi (**rendering**) file PHP menggunakan PHP-FPM.
+- Pada **Abbey**: buat rute `/orion` yang menyajikan direktori `/var/www/orion` secara **murni statis tanpa rendering PHP** (file PHP disajikan sebagai teks mentah).
 
----
+Script konfigurasi disimpan di [`scripts/soal15.sh`](scripts/soal15.sh).
 
-### Deskripsi Soal
-Buat jalur proxy khusus yang berdiri sendiri:
-- Di **penny** buat rute **/eternal** yang menyajikan direktori `/var/www/eternal` dan dapat mengeksekusi (**rendering**) file **PHP** via PHP-FPM.
-- Di **abbey** buat rute **/orion** yang menyajikan direktori `/var/www/orion` secara **murni statis tanpa rendering PHP**.
+**Cara pakai script:**
+1. Buka console **penny**, copy-paste blok `# ==== PENNY ====` pada `scripts/soal15.sh`.
+   Skrip ini menginstal `php-fpm`, membuat folder `/var/www/eternal/index.php`, mengecualikan `/eternal` dari reverse proxy (`ProxyPass /eternal !`), dan mengarahkan handler file `.php` ke unix socket `php-fpm`.
+2. Buka console **abbey**, copy-paste blok `# ==== ABBEY ====` pada `scripts/soal15.sh`.
+   Skrip ini membuat folder `/var/www/orion/` berisi file `index.html` dan `test.php`, serta menambahkan blok `location /orion/` di Nginx dengan direktif `alias /var/www/orion/;` dan `default_type text/plain;` tanpa menyertakan `fastcgi_pass`.
 
-### Langkah Konfigurasi (GNS3)
-
-**1. Di Node `penny` (Apache + PHP-FPM Jalur `/eternal`):**
+**Pengujian:**
+Dari client (misal `gamma`):
+1. Uji jalur `/eternal` pada Penny (PHP dirender):
 ```bash
-apt-get update && apt-get install -y php-fpm
-a2enmod proxy_fcgi
-
-service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
-PHP_SOCK=$(ls -1 /run/php/php*-fpm.sock 2>/dev/null | head -n 1)
-[ -z "$PHP_SOCK" ] && PHP_SOCK="/run/php/php8.2-fpm.sock"
-
-mkdir -p /var/www/eternal
-cat <<'EOF' > /var/www/eternal/index.php
-<!DOCTYPE html>
-<html>
-<head><title>Jalur Eternal</title></head>
-<body>
-    <h1>Jalur Khusus /eternal (Penny)</h1>
-    <p>Status: Layanan PHP-FPM Berhasil Dirender</p>
-    <p>PHP Version: <?php echo phpversion(); ?></p>
-</body>
-</html>
-EOF
-chown -R www-data:www-data /var/www/eternal
-chmod -R 755 /var/www/eternal
-
-# Tambahkan direktif /eternal di VirtualHost www.k37.com pada penny.conf:
-cat <<EOF > /etc/apache2/sites-available/penny.conf
-<VirtualHost *:80>
-    ServerName penny.k37.com
-    ServerAlias 10.82.5.2
-
-    RewriteEngine On
-    RewriteRule ^(.*)$ http://www.k37.com\$1 [R=301,L]
-</VirtualHost>
-
-<VirtualHost *:80>
-    ServerName www.k37.com
-    ServerAlias k37.com
-    DocumentRoot /var/www/penny
-
-    ProxyPass /admin !
-    Alias /admin /var/www/penny/admin
-
-    <Location /admin>
-        AuthType Basic
-        AuthName "Dokumen Rahasia Sindikat"
-        AuthUserFile /etc/apache2/.htpasswd
-        Require valid-user
-    </Location>
-
-    # Jalur Khusus /eternal dengan PHP-FPM
-    ProxyPass /eternal !
-    Alias /eternal /var/www/eternal
-    <Directory /var/www/eternal>
-        Options +Indexes +FollowSymLinks
-        AllowOverride None
-        Require all granted
-        DirectoryIndex index.php index.html
-        <FilesMatch "\.php$">
-            SetHandler "proxy:unix:$PHP_SOCK|fcgi://localhost"
-        </FilesMatch>
-    </Directory>
-
-    <Proxy balancer://vaultcluster>
-        BalancerMember http://10.82.1.4:80
-        BalancerMember http://10.82.1.5:80
-        ProxySet lbmethod=byrequests
-    </Proxy>
-
-    ProxyPreserveHost On
-    RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
-    ProxyPass / balancer://vaultcluster/
-    ProxyPassReverse / balancer://vaultcluster/
-</VirtualHost>
-EOF
-
-service apache2 restart
+curl -s http://www.k37.com/eternal/
 ```
+Respons menampilkan halaman HTML yang mencantumkan versi PHP server.
 
-**2. Di Node `abbey` (Nginx Murni Statis Jalur `/orion`):**
+2. Uji jalur `/orion` pada Abbey (murni statis):
 ```bash
-mkdir -p /var/www/orion
-echo "<h1>Jalur Orion Statis</h1>" > /var/www/orion/index.html
-echo '<?php echo "KODE PHP TIDAK DIRENDER - MURNI STATIS"; ?>' > /var/www/orion/test.php
-chown -R www-data:www-data /var/www/orion
-chmod -R 755 /var/www/orion
+# Akses file index.html
+curl -s http://static.k37.com/orion/
 
-cat <<EOF > /etc/nginx/sites-available/abbey
-upstream core_backend {
-    server 10.82.1.6:80;
-    server 10.82.1.7:80;
-}
-
-server {
-    listen 80 default_server;
-    server_name abbey.k37.com 10.82.4.2;
-    return 302 http://static.k37.com\$request_uri;
-}
-
-server {
-    listen 80;
-    server_name static.k37.com;
-
-    # Jalur Khusus /orion (Murni Statis tanpa FastCGI)
-    location /orion/ {
-        alias /var/www/orion/;
-        index index.html index.htm;
-        default_type text/plain;
-    }
-
-    location = /orion {
-        return 301 /orion/;
-    }
-
-    location / {
-        proxy_pass http://core_backend;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    }
-}
-EOF
-
-nginx -t && service nginx restart
+# Akses file test.php (harus menampilkan kode mentah tanpa dieksekusi)
+curl -s http://static.k37.com/orion/test.php
 ```
-
-### Script
-Seluruh konfigurasi nomor 15 disimpan di [`scripts/soal15.sh`](scripts/soal15.sh).
-
-### Verifikasi & Pembuktian
-Dari client, uji kedua jalur:
-
-1. **Uji Jalur `/eternal` di Penny (PHP Berhasil Dirender):**
-   ```bash
-   curl -s http://www.k37.com/eternal/
-   ```
-   **Output:** Tampil HTML dengan versi PHP:
-   ```html
-   <h1>Jalur Khusus /eternal (Penny)</h1>
-   <p>Status: Layanan PHP-FPM Berhasil Dirender</p>
-   <p>PHP Version: 8.2...</p>
-   ```
-
-2. **Uji Jalur `/orion` di Abbey (Murni Statis):**
-   ```bash
-   curl -s http://static.k37.com/orion/
-   curl -s http://static.k37.com/orion/test.php
-   ```
-   **Output:** Request ke `test.php` mencetak teks mentah:
-   ```php
-   <?php echo "KODE PHP TIDAK DIRENDER - MURNI STATIS"; ?>
-   ```
-   Hal ini membuktikan bahwa PHP tidak dieksekusi sama sekali dan disajikan secara murni statis.
+Hasil curl ke `test.php` menampilkan string mentah `<?php echo "KODE PHP TIDAK DIRENDER - MURNI STATIS"; ?>`, membuktikan bahwa interpreter PHP tidak dijalankan pada jalur tersebut.
