@@ -429,4 +429,69 @@ prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
 ![alt text](Assets/soal6.png)
 
 # soal no. 7
+abbey dan penny sebagai gerbang utama, obladi dan desmond sebagai web statis, oblada dan molly sebagai web dinamis. Tambahkan pada zona <xxxx>.com A record untuk vault.<xxxx>.com (IP obladi & desmond), dan core.<xxxx>.com (IP oblada & molly). Tetapkan CNAME:
 
+
+www.<xxxx>.com → penny.<xxxx>.com
+
+static.<xxxx>.com → abbey.<xxxx>.com
+
+Verifikasi dari dua klien berbeda bahwa seluruh hostname tersebut ter-resolve ke tujuan yang benar dan konsisten.
+
+
+
+Pada soal ini, kami membuat beberapa record DNS tambahan untuk menyediakan nama yang lebih mudah digunakan dalam mengakses layanan yang tersedia pada jaringan. Konfigurasi yang dibuat terdiri dari A Record untuk vault dan core, serta CNAME Record untuk menyediakan alias www dan static. Sesuai ketentuan soal, vault diarahkan ke server obladi dan desmond, sedangkan core diarahkan ke oblada dan molly. Selain itu, www dibuat sebagai alias dari penny, dan static dibuat sebagai alias dari abbey.
+
+### Konfigurasi di Prab (Master)
+
+Semua perubahan konfigurasi DNS dilakukan pada server master, yaitu prab. Kami menambahkan record berikut ke dalam file zone:
+
+```bash
+cat <<EOF >> /var/cache/bind/db.k37.com
+
+vault       IN  A       10.82.1.4
+vault       IN  A       10.82.1.5
+
+core        IN  A       10.82.1.6
+core        IN  A       10.82.1.7
+
+www         IN  CNAME   penny.k37.com.
+static      IN  CNAME   abbey.k37.com.
+
+EOF
+```
+Konfigurasi tersebut membuat vault.k37.com memiliki dua alamat IP, yaitu 10.82.1.4 dan 10.82.1.5, yang masing-masing merupakan alamat IP dari obladi dan desmond. Sementara itu, core.k37.com memiliki dua alamat IP, yaitu 10.82.1.6 dan 10.82.1.7, yang merupakan alamat IP dari oblada dan molly.
+
+Setelah melakukan perubahan pada zone file, nomor serial SOA dinaikkan dari:
+
+`2026092902` menjadi: `2026092903`
+
+Perubahan serial dilakukan menggunakan perintah:
+```bash
+sed -i 's/2026092902/2026092903/' /var/cache/bind/db.k37.com
+```
+Penaikan serial dilakukan untuk menandai bahwa terdapat perubahan pada zone k37.com, sehingga versi zone terbaru dapat dikenali oleh DNS Slave pada proses sinkronisasi.
+ ![alt text](Assets/soal7_1.png)
+
+ selanjutnya
+## Verifikasi dari Client
+
+Setelah konfigurasi DNS aktif, dilakukan pengujian dari dua client berbeda. yaitu gama dan, pengujian dilakukan dengan:
+```bash
+dig vault.k37.com A +short
+dig core.k37.com A +short
+dig www.k37.com CNAME +short
+dig static.k37.com CNAME +short
+```
+Hasil yang diperoleh:
+```
+10.82.1.5
+10.82.1.4
+10.82.1.6
+10.82.1.7
+penny.k37.com.
+abbey.k37.com.
+```
+![alt text](Assets/soal7_2.png)dan ![alt text](Assets/soal7_3.png)
+
+Hasil tersebut menunjukkan bahwa vault.k37.com berhasil di-resolve ke dua alamat IP repository statis, yaitu 10.82.1.4 dan 10.82.1.5. core.k37.com berhasil di-resolve ke 10.82.1.6 dan 10.82.1.7. Selain itu, www.k37.com berhasil mengarah ke penny.k37.com, sedangkan static.k37.com mengarah ke abbey.k37.com
