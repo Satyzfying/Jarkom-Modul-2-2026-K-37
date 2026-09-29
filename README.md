@@ -895,62 +895,23 @@ Di dalam script tersebut dilakukan:
 - Pengaktifan modul `autoindex`, `dir`, enable site `vault.conf`, lalu restart service apache2.
 
 **Pengujian:**
-Pengujian dilakukan dari client (misal `gamma` atau `delta`) menggunakan hostname:
+Jalankan pengujian dari client (misal `gamma` atau `delta`) menggunakan hostname:
 ```bash
-# Cek header status 200 OK
+# 1. Cek status HTTP 200 OK dan autoindex direktori /arsip/
 curl -i http://vault.k37.com/arsip/
 
-# Cek tampilan autoindex daftar file
-curl -s http://vault.k37.com/arsip/
-```
-Respons menampilkan status `HTTP/1.1 200 OK` dan HTML directory listing `Index of /arsip` dengan daftar berkas yang tersedia di dalamnya:
-```html
-HTTP/1.1 200 OK
-Date: Tue, 29 Sep 2026 17:40:10 GMT
-Server: Apache/2.4.68 (Debian)
-Vary: Accept-Encoding
-Content-Length: 1185
-Content-Type: text/html;charset=UTF-8
+# 2. Cek pembacaan isi file dokumen di dalam arsip
+curl http://vault.k37.com/arsip/dokumen1.txt
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
- <head>
-  <title>Index of /arsip</title>
- </head>
- <body>
-<h1>Index of /arsip</h1>
-  <table>
-   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=D">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
-   <tr><th colspan="5"><hr></th></tr>
-<tr><td valign="top"><img src="/icons/back.gif" alt="[PARENTDIR]"></td><td><a href="/">Parent Directory</a></td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
-<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="dokumen1.txt">dokumen1.txt</a></td><td align="right">2026-09-29 17:36  </td><td align="right"> 33 </td><td>&nbsp;</td></tr>
-<tr><td valign="top"><img src="/icons/layout.gif" alt="[   ]"></td><td><a href="inventaris.pdf">inventaris.pdf</a></td><td align="right">2026-09-29 17:36  </td><td align="right"> 36 </td><td>&nbsp;</td></tr>
-   <tr><th colspan="5"><hr></th></tr>
-</table>
-<address>Apache/2.4.68 (Debian) Server at vault.k37.com Port 80</address>
-</body></html>
+# 3. Cek direktori root (harus 403 Forbidden karena autoindex hanya di /arsip/)
+curl -i http://vault.k37.com/
 ```
 
-**Pengujian Tambahan:**
+> **Screenshot yang harus diambil:**
+> Ambil tangkapan layar terminal client saat menjalankan perintah `curl -i http://vault.k37.com/arsip/` yang memperlihatkan status `HTTP/1.1 200 OK` dan tampilan HTML autoindex daftar file (`dokumen1.txt`, `inventaris.pdf`). Simpan tangkapan layar sebagai `Assets/9-autoindex.png`.
 
-1. **Memastikan konten berkas dalam arsip dapat diunduh/dibaca:**
-   ```bash
-   curl http://vault.k37.com/arsip/dokumen1.txt
-   ```
-   *Output:*
-   ```text
-   Arsip dokumen rahasia 1 - Obladi
-   ```
-
-2. **Memastikan directory listing dimatikan pada direktori root `/` (harus `403 Forbidden`):**
-   ```bash
-   curl -i http://vault.k37.com/
-   ```
-   *Ekspektasi Status:*
-   ```text
-   HTTP/1.1 403 Forbidden
-   ```
-   Hasil status `403 Forbidden` ini membuktikan bahwa konfigurasi keamanan berjalan sesuai spesifikasi: direktif `Options +Indexes` hanya diberlakukan secara spesifik pada `/var/www/vault/arsip`, sedangkan direktori root `/var/www/vault` tetap terlindungi (`Options -Indexes`).
+![Bukti Autoindex Apache](Assets/9-autoindex.png)
+*(Tangkapan layar hasil curl pengujian direktori /arsip/ dari client yang menampilkan HTTP 200 OK dan autoindex)*
 
 ---
 
@@ -996,15 +957,20 @@ server {
 - Menghubungkan konfigurasi ke `sites-enabled`, menghapus konfigurasi `default`, dan restart nginx.
 
 **Pengujian:**
-Pengujian dilakukan dari client (misal `gamma` atau `delta`) menggunakan hostname:
+Jalankan pengujian dari client (misal `gamma` atau `delta`) menggunakan hostname:
 ```bash
-# Akses beranda
+# 1. Akses halaman beranda
 curl -i http://core.k37.com/
 
-# Akses halaman profil dengan clean URL tanpa .php
+# 2. Akses halaman profil dengan clean URL (tanpa .php)
 curl -i http://core.k37.com/profil
 ```
-Hasil request ke `http://core.k37.com/profil` berhasil mengembalikan kode status `200 OK` dan konten dieksekusi secara dinamis oleh PHP-FPM.
+
+> **Screenshot yang harus diambil:**
+> Ambil tangkapan layar terminal client saat menjalankan `curl -i http://core.k37.com/profil` yang memperlihatkan respons `HTTP/1.1 200 OK` dan konten profil dinamis hasil pemrosesan PHP-FPM (Node Server, Host Header, Client IP, PHP Version). Simpan gambar sebagai `Assets/10-core-profil.png`.
+
+![Bukti Web Dinamis dan Rewrite Profil](Assets/10-core-profil.png)
+*(Tangkapan layar hasil pengujian akses clean URL /profil dari client yang berhasil menampilkan konten dinamis PHP)*
 
 ---
 
@@ -1024,11 +990,12 @@ Script konfigurasi disimpan di [`scripts/soal11.sh`](scripts/soal11.sh).
 
 **Pengujian:**
 Dari client (misal `gamma`), lakukan pengujian distribusi traffic:
-1. Uji load balancing Penny ke area vault:
+
+1. Uji load balancing Penny ke area vault (jalankan request berulang):
 ```bash
 for i in {1..4}; do curl -s http://penny.k37.com/ | grep -i "Server"; done
 ```
-Respons bergantian dijawab oleh `Obladi` dan `Desmond`.
+Respons bergantian dijawab oleh `Area Vault - Server Obladi` dan `Area Vault - Server Desmond`.
 
 2. Uji load balancing Abbey ke area core dan cek forwarding header:
 ```bash
@@ -1038,6 +1005,12 @@ for i in {1..4}; do
 done
 ```
 Respons bergantian dijawab oleh `oblada` dan `molly`, serta header `Host` tercatat `abbey.k37.com` dan `Client IP` mencatat IP asli client (`10.82.2.4`).
+
+> **Screenshot yang harus diambil:**
+> Ambil tangkapan layar terminal client saat menjalankan loop pengujian ke Penny dan Abbey di atas yang membuktikan load balancing bergantian serta penerusan header `Host` dan `X-Real-IP`. Simpan gambar sebagai `Assets/11-reverse-proxy.png`.
+
+![Bukti Reverse Proxy Penny dan Abbey](Assets/11-reverse-proxy.png)
+*(Tangkapan layar hasil pengujian distribusi lalu lintas dan header forwarding dari client)*
 
 ---
 
@@ -1083,7 +1056,12 @@ curl -i -u prabs:passwordsalah http://penny.k37.com/admin
 # 3. Kredensial benar -> Berhasil (HTTP 200 OK)
 curl -i -u prabs:pakar_pinter_jadi_gob*** http://penny.k37.com/admin
 ```
-Saat kredensial benar, server mengembalikan status `HTTP/1.1 200 OK` dan menampilkan isi dokumen rahasia.
+
+> **Screenshot yang harus diambil:**
+> Ambil tangkapan layar terminal client yang memperlihatkan ketiga respons pengujian di atas: respons `401 Unauthorized` saat tanpa kredensial dan saat password salah, serta respons `200 OK` yang menampilkan isi dokumen rahasia saat login menggunakan kredensial `prabs`. Simpan gambar sebagai `Assets/12-basic-auth.png`.
+
+![Bukti Basic Authentication Penny](Assets/12-basic-auth.png)
+*(Tangkapan layar pengujian HTTP Basic Auth pada path /admin dari client)*
 
 ---
 
@@ -1119,6 +1097,12 @@ curl -L http://penny.k37.com/
 curl -L http://abbey.k37.com/profil
 ```
 
+> **Screenshot yang harus diambil:**
+> Ambil tangkapan layar terminal client saat menjalankan `curl -i` ke `penny.k37.com` (menunjukkan status code `301 Moved Permanently`) dan ke `abbey.k37.com` (menunjukkan status code `302 Moved Temporarily / Found`). Simpan gambar sebagai `Assets/13-canonical-redirect.png`.
+
+![Bukti Redirection Kanonik](Assets/13-canonical-redirect.png)
+*(Tangkapan layar hasil pengujian redirect 301 Penny dan redirect 302 Abbey menuju nama kanonik)*
+
 ---
 
 ## Nomor 14
@@ -1152,6 +1136,12 @@ curl -s http://static.k37.com/profil
   tail -n 5 /var/log/nginx/access.log
   ```
   Kolom `$remote_addr` mencatat IP `10.82.2.4` (IP asli client `gamma`).
+
+> **Screenshot yang harus diambil:**
+> Ambil tangkapan layar terminal backend (atau split terminal) yang menampilkan isi log `tail -n 5 /var/log/apache2/vault_access.log` pada node vault dan `tail -n 5 /var/log/nginx/access.log` pada node core yang memperlihatkan bahwa alamat IP yang tercatat adalah alamat IP asli client (`10.82.2.4`), bukan alamat IP proxy Penny (`10.82.5.2`) atau Abbey (`10.82.4.2`). Simpan gambar sebagai `Assets/14-real-ip-log.png`.
+
+![Bukti Real IP Access Log](Assets/14-real-ip-log.png)
+*(Tangkapan layar bukti access log Apache dan Nginx backend yang mencatat alamat IP asli client)*
 
 ---
 
@@ -1188,3 +1178,9 @@ curl -s http://static.k37.com/orion/
 curl -s http://static.k37.com/orion/test.php
 ```
 Hasil curl ke `test.php` menampilkan string mentah `<?php echo "KODE PHP TIDAK DIRENDER - MURNI STATIS"; ?>`, membuktikan bahwa interpreter PHP tidak dijalankan pada jalur tersebut.
+
+> **Screenshot yang harus diambil:**
+> Ambil tangkapan layar terminal client yang menampilkan output `curl -s http://www.k37.com/eternal/` (menampilkan versi PHP aktif) dan `curl -s http://static.k37.com/orion/test.php` (menampilkan kode sumber PHP mentah tanpa dieksekusi). Simpan gambar sebagai `Assets/15-eternal-orion.png`.
+
+![Bukti Jalur Khusus Eternal dan Orion](Assets/15-eternal-orion.png)
+*(Tangkapan layar hasil pengujian jalur dinamis /eternal dan jalur murni statis /orion)*
