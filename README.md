@@ -399,7 +399,34 @@ Contoh hasil yang diperoleh:
 PING beta.k37.com (10.82.2.3) ...
 64 bytes from 10.82.2.3: ...
 ```
-![alt text](image.png)
+![Assets/soal5_validasi.png](Assets/soal5_validasi.png)
 
 # soal no. 6
+
+Pastikan zone transfer berjalan, pastikan tedd telah menerima salinan zona terbaru dari prab. Nilai serial SOA di keduanya harus sama karena keduanya tidak bisa dipisahkan dan saling melengkapi.
+
+Tujuannya adalah memastikan bahwa zone k37.com yang terdapat pada DNS Master dapat ditransfer ke DNS Slave dan memiliki data zone yang sama. Salah satu indikator yang digunakan adalah nilai serial pada SOA, karena serial digunakan untuk menunjukkan versi dari zone yang sedang digunakan. Ketentuan praktikum juga meminta agar zone pada prab dan tedd memiliki serial yang sama setelah proses transfer.
+
+### Mengecek Serial Zone pada prab
+Untuk membuktikan bahwa tedd (DNS Slave) telah menerima salinan zone terbaru dari prab (DNS Master), kami membandingkan nomor seri SOA dari kedua server secara langsung.
+
+
+Prab (DNS Master) dan Tedd (DNS Slave)
+```bash
+dig @10.82.1.2 k37.com SOA +short
+dig @10.82.1.3 k37.com SOA +short
+```
+Kedua perintah tersebut dapat dijalankan dari client yang sama, misalnya prab, sehingga pengujian dilakukan dengan kondisi client yang sama dan hanya server DNS tujuan yang berbeda.
+
+```bash
+root@prab:~# dig @127.0.0.1 k37.com SOA +short
+prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
+root@prab:~# dig @10.82.1.2 k37.com SOA +short
+prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
+root@prab:~# dig @10.82.1.3 k37.com SOA +short
+prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
+```
+![alt text](Assets/soal6.png)
+
+# soal no. 7
 
