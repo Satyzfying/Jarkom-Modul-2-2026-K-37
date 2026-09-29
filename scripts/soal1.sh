@@ -1,9 +1,7 @@
 #!/bin/bash
-# ==============================================================================
-# NOMOR 1: Konfigurasi Interface & Alamat IP (Kelompok K-37, Prefix 10.82.x.x)
-# ==============================================================================
 
-# ==== ROOTKIT (Router Utama) ====
+
+# ROOTKIT (Router Utama) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet dhcp
@@ -34,7 +32,7 @@ iface eth5 inet static
   netmask 255.255.255.0
 EOF
 
-# ==== PRAB (eth1 - DNS) ====
+# PRAB (eth1 - DNS) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -43,7 +41,7 @@ iface eth0 inet static
   gateway 10.82.1.1
 EOF
 
-# ==== TEDD (eth1 - DNS) ====
+#  TEDD (eth1 - DNS) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -52,7 +50,7 @@ iface eth0 inet static
   gateway 10.82.1.1
 EOF
 
-# ==== OBLADI (eth1 - Static) ====
+#  OBLADI (eth1 - Static) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -61,7 +59,7 @@ iface eth0 inet static
   gateway 10.82.1.1
 EOF
 
-# ==== DESMOND (eth1 - Static) ====
+#  DESMOND (eth1 - Static) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -70,7 +68,7 @@ iface eth0 inet static
   gateway 10.82.1.1
 EOF
 
-# ==== OBLADA (eth1 - Dynamic) ====
+#  OBLADA (eth1 - Dynamic) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -79,7 +77,7 @@ iface eth0 inet static
   gateway 10.82.1.1
 EOF
 
-# ==== MOLLY (eth1 - Dynamic) ====
+#  MOLLY (eth1 - Dynamic) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -88,7 +86,7 @@ iface eth0 inet static
   gateway 10.82.1.1
 EOF
 
-# ==== ALPHA (eth2 - Klien Sayap Kiri) ====
+#  ALPHA (eth2 - Klien Sayap Kiri) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -97,7 +95,7 @@ iface eth0 inet static
   gateway 10.82.2.1
 EOF
 
-# ==== BETA (eth2 - Klien Sayap Kiri) ====
+#  BETA (eth2 - Klien Sayap Kiri) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -106,7 +104,7 @@ iface eth0 inet static
   gateway 10.82.2.1
 EOF
 
-# ==== GAMMA (eth2 - Klien Sayap Kiri) ====
+#  GAMMA (eth2 - Klien Sayap Kiri) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -115,7 +113,7 @@ iface eth0 inet static
   gateway 10.82.2.1
 EOF
 
-# ==== DELTA (eth3 - Klien Sayap Kanan) ====
+#  DELTA (eth3 - Klien Sayap Kanan) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -124,7 +122,7 @@ iface eth0 inet static
   gateway 10.82.3.1
 EOF
 
-# ==== EPSILON (eth3 - Klien Sayap Kanan) ====
+#  EPSILON (eth3 - Klien Sayap Kanan) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -133,7 +131,7 @@ iface eth0 inet static
   gateway 10.82.3.1
 EOF
 
-# ==== ABBEY (eth4 - Reverse Proxy) ====
+#  ABBEY (eth4 - Reverse Proxy) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static
@@ -142,7 +140,7 @@ iface eth0 inet static
   gateway 10.82.4.1
 EOF
 
-# ==== PENNY (eth5 - Reverse Proxy) ====
+#  PENNY (eth5 - Reverse Proxy) 
 cat <<EOF > /etc/network/interfaces
 auto eth0
 iface eth0 inet static

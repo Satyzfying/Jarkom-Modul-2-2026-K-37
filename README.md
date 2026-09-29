@@ -1,5 +1,245 @@
-***Jarkom-Modul-2-2026-K-37***
+# Jarkom-Modul-2-2026-K-37
 
+Praktikum Jaringan Komputer 2026 - Modul 2 ("The Mesh")
+
+| Nama | NRP |
+|---|---|
+| Gede Satya Putra Aryanta | 5027251012 |
+| Azfaro Zid Ilmi | 5027251018 |
+
+
+---
+
+## Daftar Isi
+
+- [Informasi Topologi & Pembagian IP](#informasi-topologi--pembagian-ip)
+- [Nomor 1](#nomor-1---satya--azfaro)
+- [Nomor 2](#nomor-2---satya--azfaro)
+- [Nomor 3](#nomor-3---satya--azfaro)
+- [Soal No. 4](#soal-no-4)
+- [Soal no. 5](#soal-no-5)
+- [Soal no. 6](#soal-no-6)
+- [soal no. 7](#soal-no-7)
+- [soal no.8](#soal-no8)
+
+---
+
+
+### Tabel Pembagian Interface & Alamat IP
+
+Prefix ip : 10.82.x.x
+
+| Node | Antarmuka | Alamat IP | Netmask | Gateway | Subnet / Keterangan |
+|---|---|---|---|---|---|
+| rootkit | `eth0`<br>`eth1`<br>`eth2`<br>`eth3`<br>`eth4`<br>`eth5` | DHCP (NAT)<br>`10.82.1.1`<br>`10.82.2.1`<br>`10.82.3.1`<br>`10.82.4.1`<br>`10.82.5.1` | -<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0`<br>`255.255.255.0` | -<br>-<br>-<br>-<br>-<br>- | Router Utama (Internet Gateway)<br>Subnet eth1 (Server)<br>Subnet eth2 (Klien Sayap Kiri)<br>Subnet eth3 (Klien Sayap Kanan)<br>Subnet eth4 (Reverse Proxy Abbey)<br>Subnet eth5 (Reverse Proxy Penny) |
+| prab | `eth0` | `10.82.1.2` | `255.255.255.0` | `10.82.1.1` | DNS Server (eth1) |
+| tedd | `eth0` | `10.82.1.3` | `255.255.255.0` | `10.82.1.1` | DNS Server (eth1) |
+| obladi | `eth0` | `10.82.1.4` | `255.255.255.0` | `10.82.1.1` | Static Web Server (eth1) |
+| desmond | `eth0` | `10.82.1.5` | `255.255.255.0` | `10.82.1.1` | Static Web Server (eth1) |
+| oblada | `eth0` | `10.82.1.6` | `255.255.255.0` | `10.82.1.1` | Dynamic Web Server (eth1) |
+| molly | `eth0` | `10.82.1.7` | `255.255.255.0` | `10.82.1.1` | Dynamic Web Server (eth1) |
+| alpha | `eth0` | `10.82.2.2` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (eth2) |
+| beta | `eth0` | `10.82.2.3` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (eth2) |
+| gamma | `eth0` | `10.82.2.4` | `255.255.255.0` | `10.82.2.1` | Klien Sayap Kiri (eth2) |
+| delta | `eth0` | `10.82.3.2` | `255.255.255.0` | `10.82.3.1` | Klien Sayap Kanan (eth3) |
+| epsilon | `eth0` | `10.82.3.3` | `255.255.255.0` | `10.82.3.1` | Klien Sayap Kanan (eth3) |
+| abbey | `eth0` | `10.82.4.2` | `255.255.255.0` | `10.82.4.1` | Reverse Proxy Server (eth4) |
+| penny | `eth0` | `10.82.5.2` | `255.255.255.0` | `10.82.5.1` | Reverse Proxy Server (eth5) |
+
+---
+
+# Laporan Praktikum Modul 2
+
+## Nomor 1 - Satya & Azfaro
+
+
+---
+
+### Deskripsi Soal
+Intinya bikin topologi sesuai dengan gambar yang di provide di soal dan mengsetup ip dan default gateway untuk seluruh entitas yang ada.
+
+### Penjelasan & Konfigurasi
+
+Konfigurasi disimpan di `/etc/network/interfaces` pada masing-masing node. 
+
+1. **Router Utama (`rootkit`):**
+   - `eth0` diatur menggunakan DHCP 
+   - `eth1` sampai `eth5` diatur statis dengan IP `10.82.x.1` dan netmask `255.255.255.0` sebagai default gateway untuk masing-masing subnet.
+
+```bash
+# /etc/network/interfaces pada rootkit
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+  address 10.82.1.1
+  netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+  address 10.82.2.1
+  netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+  address 10.82.3.1
+  netmask 255.255.255.0
+
+auto eth4
+iface eth4 inet static
+  address 10.82.4.1
+  netmask 255.255.255.0
+
+auto eth5
+iface eth5 inet static
+  address 10.82.5.1
+  netmask 255.255.255.0
+```
+
+2. **Host Non-Router:**
+   Setiap node host internal dikonfigurasi dengan IP statis pada antarmuka `eth0` dengan gateway yang diarahkan ke IP antarmuka router `rootkit` pada subnet tersebut (`10.82.x.1`).
+
+   Contoh konfigurasi pada node `prab` (`10.82.1.2`):
+```bash
+# /etc/network/interfaces pada prab
+auto eth0
+iface eth0 inet static
+  address 10.82.1.2
+  netmask 255.255.255.0
+  gateway 10.82.1.1
+```
+
+### Script
+Seluruh konfigurasi nomor 1 disimpan di [`scripts/soal1.sh`](scripts/soal1.sh).  
+
+
+### Verifikasi & Pembuktian
+Pengecekan alamat IP pada setiap node dapat dilakukan menggunakan perintah:
+```bash
+ip -br a
+```
+
+![Topologi Jaringan Modul 2](assets/1-topology.png)
+*(Tangkapan layar topologi jaringan Modul 2)*
+
+![Bukti Konfigurasi IP Rootkit](assets/1-rootkit-ip.png)
+*(Tangkapan layar hasil perintah `ip -br a` pada rootkit)*
+
+---
+
+## Nomor 2 - Satya & Azfaro
+
+
+---
+
+### Deskripsi Soal
+Mengonfigurasi konektivitas WAN pada router utama `rootkit`, mengaktifkan IP forwarding pada level kernel Linux, dan menerapkan aturan NAT Masquerade agar seluruh node internal pada prefix `10.82.0.0/16` dapat mengakses jaringan internet melalui interface `eth0`.
+
+### Penjelasan & Konfigurasi
+
+Pada node `rootkit`:
+1. **DHCP Client pada WAN (`eth0`):**
+   Menjalankan `udhcpc -i eth0` untuk mendapatkan IP dan default gateway dari node NAT virtualisasi / internet.
+2. **IP Forwarding:**
+   Mengaktifkan kernel packet forwarding agar router dapat meneruskan paket antar-subnet internal maupun ke luar jaringan:
+   ```bash
+   sysctl -w net.ipv4.ip_forward=1
+   ```
+3. **NAT Masquerade:**
+   Menerapkan aturan `iptables` pada tabel NAT rantai `POSTROUTING` untuk menyamarkan (masquerade) paket data dari seluruh subnet internal `10.82.0.0/16` saat keluar melalui antarmuka internet `eth0`:
+   ```bash
+   iptables -t nat -F POSTROUTING
+   iptables -t nat -A POSTROUTING -o eth0 -s 10.82.0.0/16 -j MASQUERADE
+   ```
+
+### Script Otomasi
+Konfigurasi nomor 2 diotomasi melalui skrip [`scripts/soal2.sh`](scripts/soal2.sh):
+
+```bash
+#!/bin/bash
+# ==== ROOTKIT ====
+# Pastikan antarmuka WAN (eth0) aktif mengambil DHCP dari NAT node
+udhcpc -i eth0
+
+# Aktifkan IP forwarding di kernel
+sysctl -w net.ipv4.ip_forward=1
+
+# Pasang masquerading untuk seluruh subnet internal 10.82.0.0/16
+iptables -t nat -F POSTROUTING
+iptables -t nat -A POSTROUTING -o eth0 -s 10.82.0.0/16 -j MASQUERADE
+```
+
+### Verifikasi & Pembuktian
+Pengecekan aturan NAT dan konektivitas internet pada `rootkit`:
+```bash
+iptables -t nat -L -v -n
+ping -c 3 8.8.8.8
+```
+
+![Bukti Aturan NAT Masquerade](assets/2-nat-masquerade.png)
+*(Tangkapan layar daftar aturan iptables NAT POSTROUTING pada rootkit)*
+
+![Bukti Ping Internet Rootkit](assets/2-rootkit-ping.png)
+*(Tangkapan layar pengujian ping ke 8.8.8.8 dari rootkit)*
+
+---
+
+## Nomor 3 - Satya & Azfaro
+
+---
+
+### Deskripsi Soal
+Mengonfigurasi DNS resolver awal dengan nameserver `192.168.122.1` pada seluruh host non-router dalam topologi dan memastikan seluruh node dapat saling terhubung (inter-subnet routing) serta dapat mengakses internet.
+
+### Penjelasan & Konfigurasi
+
+Agar seluruh host non-router dapat melakukan *domain name resolution* sebelum DNS server lokal di-deploy, file `/etc/resolv.conf` pada setiap host diarahkan ke DNS resolver `192.168.122.1`:
+
+```bash
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+```
+
+Konfigurasi ini diterapkan secara merata pada:
+- **Subnet eth1:** `prab`, `tedd`, `obladi`, `desmond`, `oblada`, `molly`
+- **Subnet eth2:** `alpha`, `beta`, `gamma`
+- **Subnet eth3:** `delta`, `epsilon`
+- **Subnet eth4:** `abbey`
+- **Subnet eth5:** `penny`
+
+Karena setiap host telah memiliki default gateway ke router `rootkit` (pada Nomor 1), dan `rootkit` telah mengaktifkan IP forwarding serta NAT Masquerade (pada Nomor 2), maka:
+1. Paket DNS query dari client diteruskan oleh router ke resolver `192.168.122.1`.
+2. Routing antar-subnet (misalnya komunikasi dari klien Sayap Kiri `alpha` ke web server `obladi`) dapat langsung terhubung melalui router `rootkit` tanpa perlu konfigurasi routing statis tambahan di sisi client.
+
+### Script Otomasi
+Konfigurasi nomor 3 diotomasi melalui skrip [`scripts/soal3.sh`](scripts/soal3.sh).
+
+```bash
+# Cuplikan eksekusi script soal3.sh pada node klien/server:
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+```
+
+### Verifikasi & Pembuktian
+Pengujian dilakukan dengan dua tahap:
+
+1. **Uji Resolusi DNS & Koneksi Internet:**
+   Menguji koneksi internet dengan domain menggunakan `ping` dari host klien (misalnya `alpha`):
+   ```bash
+   ping -c 3 google.com
+   ```
+2. **Uji Konektivitas Antar-Subnet (Inter-Subnet Routing):**
+   Menguji konektivitas antar node pada subnet yang berbeda:
+   - Dari `alpha` (`10.82.2.2`) ping ke `prab` (`10.82.1.2`)
+   - Dari `alpha` (`10.82.2.2`) ping ke `delta` (`10.82.3.2`)
+   - Dari `delta` (`10.82.3.2`) ping ke `abbey` (`10.82.4.2`)
+
+![Bukti Ping Resolv DNS](assets/3-dns-ping.png)
+*(Tangkapan layar pengujian ping google.com dari klien)*
+
+![Bukti Ping Antar Subnet](assets/3-inter-subnet-ping.png)
+*(Tangkapan layar pengujian ping lintas subnet/switch)*
+
+---
 
 # Soal No. 4 
 Penjaga Direktori mulai menuliskan hukum The Mesh. Pada node prab, bangun zona <xxxx>.com sebagai authoritative dengan SOA yang menunjuk ke prab.<xxxx>.com, serta tambahkan catatan NS untuk prab.<xxxx>.com dan tedd.<xxxx>.com. Buat A record untuk prab.<xxxx>.com dan tedd.<xxxx>.com yang mengarah ke alamat IP mereka masing-masing, serta A record apex <xxxx>.com yang mengarah ke gerbang aplikasi dinamis (penny). Aktifkan fitur notify dan allow-transfer ke tedd, lalu set forwarders ke 192.168.122.1. Di node tedd, tarik zona <xxxx>.com dari master dan pastikan server menjawab secara authoritative. Setelah fondasi nama ini berdiri kokoh, perbarui urutan resolver pada seluruh Entitas non-router menjadi: IP prab, IP tedd, lalu 192.168.122.1. Verifikasi bahwa query ke domain apex maupun hostname di dalam zona dijawab dengan benar oleh prab atau tedd. 
