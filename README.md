@@ -1158,11 +1158,11 @@ curl -s http://static.k37.com/profil
   ```
   Kolom `$remote_addr` mencatat IP `10.82.2.4` (IP asli client `gamma`).
 
-> **Screenshot yang harus diambil:**
-> Ambil tangkapan layar terminal backend (atau split terminal) yang menampilkan isi log `tail -n 5 /var/log/apache2/vault_access.log` pada node vault dan `tail -n 5 /var/log/nginx/access.log` pada node core yang memperlihatkan bahwa alamat IP yang tercatat adalah alamat IP asli client (`10.82.2.4`), bukan alamat IP proxy Penny (`10.82.5.2`) atau Abbey (`10.82.4.2`). Simpan gambar sebagai `Assets/14-real-ip-log.png`.
+![Bukti Real IP Access Log Apache Vault](Assets/14-vault-log.png)
+*(Tangkapan layar bukti access log Apache pada server Obladi mencatat IP asli client 10.82.2.4)*
 
-![Bukti Real IP Access Log](Assets/14-real-ip-log.png)
-*(Tangkapan layar bukti access log Apache dan Nginx backend yang mencatat alamat IP asli client)*
+![Bukti Real IP Access Log Nginx Core](Assets/14-core-log.png)
+*(Tangkapan layar bukti access log Nginx pada server Molly mencatat IP asli client 10.82.2.4)*
 
 ---
 
