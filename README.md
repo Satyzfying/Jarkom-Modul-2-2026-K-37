@@ -1518,3 +1518,88 @@ named -c /etc/bind/named.conf
 
    ![Hasil Curl Outbound](Assets/19-curl-outbound.png)
    *(Tangkapan layar hasil curl http://outbound.k37.com yang menampilkan konten halaman http.badssl.com)*
+
+---
+
+## Nomor 20
+
+---
+
+Diminta untuk memastikan bahwa seluruh *service* dan konfigurasi yang telah dikerjakan dari awal praktikum tetap berjalan normal dan berstatus *autostart* saat node di-restart. Khusus pada nomor ini, konfigurasi IP fiktif pada nomor 18 diabaikan dan koordinat A record dikembalikan normal ke aslinya.
+
+Script konfigurasi disimpan di [`scripts/soal20.sh`](scripts/soal20.sh).
+
+### 1. Pengembalian Koordinat Normal pada DNS Master (Prab)
+Pada node **prab**, record IP milik `abbey` dikembalikan ke IP aslinya (`10.82.4.2`), nilai serial SOA dinaikkan, dan service BIND9 di-reload:
+```bash
+sed -i 's/10.82.4.50/10.82.4.2/' /var/cache/bind/db.k37.com
+pkill named
+named -c /etc/bind/named.conf
+```
+
+![Bukti Pengembalian IP Normal Abbey pada Prab](Assets/20-prab-restore.png)
+*(Tangkapan layar pengembalian A record abbey ke 10.82.4.2 pada node Prab)*
+
+### 2. Konfigurasi Autostart Service pada Setiap Node
+Perintah inisialisasi dimasukkan ke file `/root/.bashrc` pada masing-masing node agar otomatis aktif saat node/container di-restart:
+
+1. **Rootkit (Router & NAT Gateway):**
+   ```bash
+   echo "sysctl -w net.ipv4.ip_forward=1" >> /root/.bashrc
+   echo "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE" >> /root/.bashrc
+   ```
+2. **Prab & Tedd (DNS Master & Slave):**
+   ```bash
+   echo "named -c /etc/bind/named.conf" >> /root/.bashrc
+   ```
+3. **Penny (Reverse Proxy Apache & PHP-FPM):**
+   ```bash
+   echo "service php8.4-fpm start 2>/dev/null || service php-fpm start 2>/dev/null" >> /root/.bashrc
+   echo "service apache2 start" >> /root/.bashrc
+   ```
+4. **Abbey (Reverse Proxy Nginx):**
+   ```bash
+   echo "service nginx start" >> /root/.bashrc
+   ```
+5. **Obladi & Desmond (Cluster Apache Vault):**
+   ```bash
+   echo "service apache2 start" >> /root/.bashrc
+   ```
+6. **Oblada & Molly (Cluster Nginx & PHP-FPM Core):**
+   ```bash
+   echo "service php8.4-fpm start 2>/dev/null || service php-fpm start 2>/dev/null" >> /root/.bashrc
+   echo "service nginx start" >> /root/.bashrc
+   ```
+7. **Client Nodes (Alpha, Beta, Gamma, Delta, Epsilon):**
+   ```bash
+   cat <<'EOF' >> /root/.bashrc
+   cat > /etc/resolv.conf <<'CONF'
+   nameserver 10.82.1.2
+   nameserver 10.82.1.3
+   nameserver 192.168.122.1
+   CONF
+   EOF
+   ```
+
+### 3. Pengujian dan Verifikasi Pasca-Restart
+Setelah seluruh node di-restart melalui GNS3, pengujian menyeluruh dilakukan langsung dari node Klien (**alpha** atau **gamma**) tanpa menyalakan service manual apa pun:
+
+```bash
+# 1. Verifikasi DNS: Pastikan IP abbey telah normal kembali ke 10.82.4.2
+dig @10.82.1.2 abbey.k37.com +short
+
+# 2. Verifikasi Reverse Proxy Penny & Cluster Vault (HTTP 200 OK)
+curl -I http://www.k37.com/
+
+# 3. Verifikasi Reverse Proxy Abbey & Cluster Core (HTTP 200 OK)
+curl -I http://static.k37.com/profil
+
+# 4. Verifikasi Dedicated Path Penny (/eternal dinamis PHP)
+curl -s http://www.k37.com/eternal/
+
+# 5. Verifikasi Dedicated Path Abbey (/orion murni statis)
+curl -s http://static.k37.com/orion/
+```
+
+![Bukti Verifikasi Pasca Restart Soal 20](Assets/20-autostart-verification.png)
+*(Tangkapan layar pengujian pasca-restart: seluruh service DNS, Reverse Proxy, dan Web Server backend langsung berjalan normal secara otomatis)*
