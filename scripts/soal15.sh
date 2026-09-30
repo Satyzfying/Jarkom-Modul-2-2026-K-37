@@ -5,9 +5,10 @@ apt-get update
 apt-get install -y php-fpm
 a2enmod proxy_fcgi
 
-service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
+PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.4")
+service "php${PHP_VER}-fpm" start 2>/dev/null || service php8.4-fpm start 2>/dev/null || service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
 PHP_SOCK=$(ls -1 /run/php/php*-fpm.sock 2>/dev/null | head -n 1)
-[ -z "$PHP_SOCK" ] && PHP_SOCK="/run/php/php8.2-fpm.sock"
+[ -z "$PHP_SOCK" ] && PHP_SOCK="/run/php/php${PHP_VER}-fpm.sock"
 
 mkdir -p /var/www/eternal
 cat <<'EOF' > /var/www/eternal/index.php
@@ -38,8 +39,16 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
     ServerAlias k37.com
     DocumentRoot /var/www/penny
 
+    # Pengecualian path /admin dari reverse proxy
     ProxyPass /admin !
     Alias /admin /var/www/penny/admin
+
+    <Directory /var/www/penny/admin>
+        Options -Indexes +FollowSymLinks
+        AllowOverride None
+        Require valid-user
+        DirectoryIndex index.html
+    </Directory>
 
     <Location /admin>
         AuthType Basic
@@ -48,6 +57,7 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
         Require valid-user
     </Location>
 
+    # Dedicated Path /eternal (Rendering PHP via PHP-FPM)
     ProxyPass /eternal !
     Alias /eternal /var/www/eternal
     <Directory /var/www/eternal>
@@ -70,6 +80,9 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
     RequestHeader set X-Real-IP "expr=%{REMOTE_ADDR}"
     ProxyPass / balancer://vaultcluster/
     ProxyPassReverse / balancer://vaultcluster/
+
+    ErrorLog \${APACHE_LOG_DIR}/penny_error.log
+    CustomLog \${APACHE_LOG_DIR}/penny_access.log combined
 </VirtualHost>
 EOF
 

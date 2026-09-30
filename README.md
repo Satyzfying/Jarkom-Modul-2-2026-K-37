@@ -1200,9 +1200,6 @@ curl -s http://static.k37.com/orion/test.php
 ```
 Hasil curl ke `test.php` menampilkan string mentah `<?php echo "KODE PHP TIDAK DIRENDER - MURNI STATIS"; ?>`, membuktikan bahwa interpreter PHP tidak dijalankan pada jalur tersebut.
 
-> **Screenshot yang harus diambil:**
-> Ambil tangkapan layar terminal client yang menampilkan output `curl -s http://www.k37.com/eternal/` (menampilkan versi PHP aktif) dan `curl -s http://static.k37.com/orion/test.php` (menampilkan kode sumber PHP mentah tanpa dieksekusi). Simpan gambar sebagai `Assets/15-eternal-orion.png`.
-
 ![Bukti Jalur Khusus Eternal dan Orion](Assets/15-eternal-orion.png)
 *(Tangkapan layar hasil pengujian jalur dinamis /eternal dan jalur murni statis /orion)*
 
