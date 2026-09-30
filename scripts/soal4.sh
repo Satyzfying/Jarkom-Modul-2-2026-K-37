@@ -71,9 +71,17 @@ zone "k37.com" {
 
 EOF
 
+cat /etc/bind/named.conf.local
+
 named-checkconf
 
 named -c /etc/bind/named.conf
+ls -l /var/cache/bind/
+
+master
+dig @10.82.1.3 k37.com SOA +short
+dig @10.82.1.3 abbey.k37.com A +short
+
 
 
 # ==== SEMUA HOST ====
