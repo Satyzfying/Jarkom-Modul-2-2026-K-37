@@ -17,8 +17,16 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
     ServerAlias k37.com
     DocumentRoot /var/www/penny
 
+    # Pengecualian path /admin dari reverse proxy
     ProxyPass /admin !
     Alias /admin /var/www/penny/admin
+
+    <Directory /var/www/penny/admin>
+        Options -Indexes +FollowSymLinks
+        AllowOverride None
+        Require valid-user
+        DirectoryIndex index.html
+    </Directory>
 
     <Location /admin>
         AuthType Basic
@@ -34,9 +42,12 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
     </Proxy>
 
     ProxyPreserveHost On
-    RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
+    RequestHeader set X-Real-IP "expr=%{REMOTE_ADDR}"
     ProxyPass / balancer://vaultcluster/
     ProxyPassReverse / balancer://vaultcluster/
+
+    ErrorLog \${APACHE_LOG_DIR}/penny_error.log
+    CustomLog \${APACHE_LOG_DIR}/penny_access.log combined
 </VirtualHost>
 EOF
 
@@ -65,6 +76,7 @@ server {
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
 EOF

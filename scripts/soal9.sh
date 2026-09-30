@@ -5,6 +5,7 @@ apt-get update
 apt-get install -y apache2
 
 mkdir -p /var/www/vault/arsip
+echo "<h1>Area Vault - Server Obladi</h1>" > /var/www/vault/index.html
 echo "Arsip dokumen rahasia 1 - Obladi" > /var/www/vault/arsip/dokumen1.txt
 echo "Laporan inventaris data statis K-37" > /var/www/vault/arsip/inventaris.pdf
 chown -R www-data:www-data /var/www/vault
@@ -13,7 +14,7 @@ chmod -R 755 /var/www/vault
 cat <<EOF > /etc/apache2/sites-available/vault.conf
 <VirtualHost *:80>
     ServerName vault.k37.com
-    ServerAlias obladi.k37.com desmond.k37.com
+    ServerAlias obladi.k37.com desmond.k37.com penny.k37.com www.k37.com
     DocumentRoot /var/www/vault
 
     <Directory /var/www/vault>
@@ -44,6 +45,7 @@ apt-get update
 apt-get install -y apache2
 
 mkdir -p /var/www/vault/arsip
+echo "<h1>Area Vault - Server Desmond</h1>" > /var/www/vault/index.html
 echo "Arsip dokumen rahasia 2 - Desmond" > /var/www/vault/arsip/dokumen2.txt
 echo "Laporan inventaris data statis K-37" > /var/www/vault/arsip/inventaris.pdf
 chown -R www-data:www-data /var/www/vault
@@ -52,7 +54,7 @@ chmod -R 755 /var/www/vault
 cat <<EOF > /etc/apache2/sites-available/vault.conf
 <VirtualHost *:80>
     ServerName vault.k37.com
-    ServerAlias obladi.k37.com desmond.k37.com
+    ServerAlias obladi.k37.com desmond.k37.com penny.k37.com www.k37.com
     DocumentRoot /var/www/vault
 
     <Directory /var/www/vault>

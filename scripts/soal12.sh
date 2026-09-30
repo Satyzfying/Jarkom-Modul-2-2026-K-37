@@ -3,6 +3,7 @@
 # ==== PENNY ====
 apt-get update
 apt-get install -y apache2-utils
+a2enmod auth_basic authn_file authz_user
 
 mkdir -p /var/www/penny/admin
 cat <<'EOF' > /var/www/penny/admin/index.html
@@ -29,8 +30,16 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
 
     DocumentRoot /var/www/penny
 
+    # Pengecualian path /admin dari reverse proxy
     ProxyPass /admin !
     Alias /admin /var/www/penny/admin
+
+    <Directory /var/www/penny/admin>
+        Options -Indexes +FollowSymLinks
+        AllowOverride None
+        Require valid-user
+        DirectoryIndex index.html
+    </Directory>
 
     <Location /admin>
         AuthType Basic
@@ -46,11 +55,25 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
     </Proxy>
 
     ProxyPreserveHost On
-    RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
+    RequestHeader set X-Real-IP "expr=%{REMOTE_ADDR}"
 
     ProxyPass / balancer://vaultcluster/
     ProxyPassReverse / balancer://vaultcluster/
+
+    ErrorLog \${APACHE_LOG_DIR}/penny_error.log
+    CustomLog \${APACHE_LOG_DIR}/penny_access.log combined
 </VirtualHost>
 EOF
 
 service apache2 restart
+
+# ==== PENGUJIAN DARI CLIENT (misal: gamma) ====
+# 1. Tanpa kredensial (HTTP 401 Unauthorized):
+#    curl -i http://penny.k37.com/admin/
+#
+# 2. Password salah (HTTP 401 Unauthorized):
+#    curl -i -u "prabs:passwordsalah" http://penny.k37.com/admin/
+#
+# 3. Kredensial benar (HTTP 200 OK):
+#    curl -i -u "prabs:pakar_pinter_jadi_gob***" http://penny.k37.com/admin/
+
