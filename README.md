@@ -1207,9 +1207,55 @@ Hasil curl ke `test.php` menampilkan string mentah `<?php echo "KODE PHP TIDAK D
 
 ## Nomor 16
 
-## NO 17
+---
 
-# Soal no 17
+Diminta untuk melakukan uji ketahanan (*stress test benchmark*) menggunakan ApacheBench (`ab`) dari salah satu node klien (misal: **alpha** atau **gamma**) terhadap dua titik akhir gerbang The Mesh:
+- `http://www.k37.com/` (Reverse Proxy Penny -> Apache Vault Cluster)
+- `http://static.k37.com/` (Reverse Proxy Abbey -> Nginx Core Cluster)
+
+Parameter pengujian:
+- Jumlah permintaan: 250 requests (`-n 250`)
+- Tingkat konkurensi: 10 concurrent requests (`-c 10`)
+
+Script disimpan di [`scripts/soal16.sh`](scripts/soal16.sh).
+
+**Cara pakai script:**
+1. Buka console klien (misal **alpha** atau **gamma**).
+2. Install `apache2-utils` jika belum ada:
+   ```bash
+   apt-get update
+   apt-get install -y apache2-utils
+   ```
+3. Jalankan pengujian benchmark:
+   ```bash
+   # 1. Uji titik akhir www.k37.com
+   ab -n 250 -c 10 http://www.k37.com/
+
+   # 2. Uji titik akhir static.k37.com
+   ab -n 250 -c 10 http://static.k37.com/
+   ```
+
+**Rangkuman Hasil Benchmark:**
+Berdasarkan hasil pengujian ApacheBench:
+- **Complete requests**: Seluruh 250 permintaan berhasil diproses tuntas (100% sukses).
+- **Failed requests**: Terdapat catatan `Length: 125` dengan `Connect: 0` dan `Receive: 0`. Hal ini wajar dan membuktikan bahwa load balancing aktif mendistribusikan permintaan secara bergantian ke dua node backend yang memiliki sedikit perbedaan ukuran file konten HTML.
+- **Requests per second (Throughput)**:
+  - `www.k37.com` (Penny -> Vault): **2236.16 requests/sec** (waktu rata-rata **4.472 ms** per request).
+  - `static.k37.com` (Abbey -> Core): **2008.50 requests/sec** (waktu rata-rata **4.979 ms** per request).
+- **Transfer rate**:
+  - `www.k37.com`: **616.91 Kbytes/sec**.
+  - `static.k37.com`: **679.63 Kbytes/sec**.
+
+![Bukti Stress Test www.k37.com](Assets/16-stress-test-www.png)
+*(Tangkapan layar hasil benchmark ApacheBench pada www.k37.com)*
+
+![Bukti Stress Test static.k37.com](Assets/16-stress-test-static.png)
+*(Tangkapan layar hasil benchmark ApacheBench pada static.k37.com)*
+
+---
+
+
+## Soal no 17
 
 Tambahkan TXT record pada DNS untuk semua klien sayap kiri dan sayap kanan (Alpha, Beta, Gamma, Delta, Epsilon). Jika DNS di-query TXT terhadap nama domain mereka (contoh: alpha.<xxxx>.com), sistem harus mengembalikan teks berupa nama hostname mereka masing-masing (contoh: "alpha").
 
