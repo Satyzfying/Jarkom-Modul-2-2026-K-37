@@ -67,7 +67,7 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
     </Proxy>
 
     ProxyPreserveHost On
-    RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
+    RequestHeader set X-Real-IP "expr=%{REMOTE_ADDR}"
     ProxyPass / balancer://vaultcluster/
     ProxyPassReverse / balancer://vaultcluster/
 </VirtualHost>
@@ -114,6 +114,7 @@ server {
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
 EOF

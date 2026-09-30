@@ -907,11 +907,9 @@ curl http://vault.k37.com/arsip/dokumen1.txt
 curl -i http://vault.k37.com/
 ```
 
-> **Screenshot yang harus diambil:**
-> Ambil tangkapan layar terminal client saat menjalankan perintah `curl -i http://vault.k37.com/arsip/` yang memperlihatkan status `HTTP/1.1 200 OK` dan tampilan HTML autoindex daftar file (`dokumen1.txt`, `inventaris.pdf`). Simpan tangkapan layar sebagai `Assets/9-autoindex.png`.
 
 ![Bukti Autoindex Apache](Assets/9-autoindex.png)
-*(Tangkapan layar hasil curl pengujian direktori /arsip/ dari client yang menampilkan HTTP 200 OK dan autoindex)*
+
 
 ---
 
@@ -966,11 +964,10 @@ curl -i http://core.k37.com/
 curl -i http://core.k37.com/profil
 ```
 
-> **Screenshot yang harus diambil:**
-> Ambil tangkapan layar terminal client saat menjalankan `curl -i http://core.k37.com/profil` yang memperlihatkan respons `HTTP/1.1 200 OK` dan konten profil dinamis hasil pemrosesan PHP-FPM (Node Server, Host Header, Client IP, PHP Version). Simpan gambar sebagai `Assets/10-core-profil.png`.
+
 
 ![Bukti Web Dinamis dan Rewrite Profil](Assets/10-core-profil.png)
-*(Tangkapan layar hasil pengujian akses clean URL /profil dari client yang berhasil menampilkan konten dinamis PHP)*
+*(Screenshot hasil pengujian akses clean URL /profil dari client yang berhasil menampilkan konten dinamis PHP)*
 
 ---
 
@@ -982,14 +979,29 @@ Diminta untuk mengonfigurasi **Penny** (Apache) sebagai reverse proxy & load bal
 
 Script konfigurasi disimpan di [`scripts/soal11.sh`](scripts/soal11.sh).
 
-**Cara pakai script:**
+**Prasyarat Sebelum Menjalankan:**
+1. **Routing Router (`rootkit`)**: Pastikan packet forwarding aktif:
+   ```bash
+   sysctl -w net.ipv4.ip_forward=1
+   iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+   ```
+2. **Identitas Backend Vault (`obladi` & `desmond`)**: Pastikan file `index.html` sudah dibuat agar pengujian tidak menghasilkan `403 Forbidden`:
+   * Di **obladi**: `echo "<h1>Area Vault - Server Obladi</h1>" > /var/www/vault/index.html`
+   * Di **desmond**: `echo "<h1>Area Vault - Server Desmond</h1>" > /var/www/vault/index.html`
+
+**Langkah Eksekusi Script:**
 1. Buka console **penny**, copy-paste blok kode di bawah `# ==== PENNY ====` pada `scripts/soal11.sh`.
-   Skrip ini mengaktifkan modul `proxy`, `proxy_http`, `proxy_balancer`, `lbmethod_byrequests`, dan `headers` di Apache, lalu memasang cluster balancer `balancer://vaultcluster` ke IP `10.82.1.4:80` dan `10.82.1.5:80` dengan `ProxyPreserveHost On` dan `RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"`.
+   Skrip ini mengaktifkan modul `proxy`, `proxy_http`, `proxy_balancer`, `lbmethod_byrequests`, `lbmethod_bytraffic`, `lbmethod_bybusyness`, `slotmem_shm`, dan `headers` di Apache, lalu memasang cluster balancer `balancer://vaultcluster` ke IP `10.82.1.4:80` dan `10.82.1.5:80` dengan `ProxyPreserveHost On` dan `RequestHeader set X-Real-IP "expr=%{REMOTE_ADDR}"`.
 2. Buka console **abbey**, copy-paste blok kode di bawah `# ==== ABBEY ====` pada `scripts/soal11.sh`.
-   Skrip ini memasang upstream `core_backend` di Nginx ke IP `10.82.1.6:80` dan `10.82.1.7:80` serta meneruskan header `proxy_set_header Host $host;` dan `proxy_set_header X-Real-IP $remote_addr;`.
+   Skrip ini memasang upstream `core_backend` di Nginx ke IP `10.82.1.6:80` dan `10.82.1.7:80` serta meneruskan header `proxy_set_header Host $host;`, `proxy_set_header X-Real-IP $remote_addr;`, `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`, dan `proxy_set_header X-Forwarded-Proto $scheme;`.
 
 **Pengujian:**
-Dari client (misal `gamma`), lakukan pengujian distribusi traffic:
+Dari client (misal node **gamma**):
+Pastikan resolusi nama domain diarahkan ke DNS Master (`echo "nameserver 10.82.1.2" > /etc/resolv.conf`) atau pasang mapping statis di `/etc/hosts` client:
+```bash
+echo "10.82.5.2 penny.k37.com www.k37.com" >> /etc/hosts
+echo "10.82.4.2 abbey.k37.com static.k37.com" >> /etc/hosts
+```
 
 1. Uji load balancing Penny ke area vault (jalankan request berulang):
 ```bash
@@ -1006,8 +1018,13 @@ done
 ```
 Respons bergantian dijawab oleh `oblada` dan `molly`, serta header `Host` tercatat `abbey.k37.com` dan `Client IP` mencatat IP asli client (`10.82.2.4`).
 
-> **Screenshot yang harus diambil:**
-> Ambil tangkapan layar terminal client saat menjalankan loop pengujian ke Penny dan Abbey di atas yang membuktikan load balancing bergantian serta penerusan header `Host` dan `X-Real-IP`. Simpan gambar sebagai `Assets/11-reverse-proxy.png`.
+> **Catatan Troubleshooting Saat Demo:**
+> - Jika muncul error `Could not resolve host: penny.k37.com` atau `Temporary failure in name resolution`:
+>   1. Jalankan `named -c /etc/bind/named.conf` di **prab** untuk memastikan daemon DNS BIND9 aktif.
+>   2. Jalankan `sysctl -w net.ipv4.ip_forward=1` di **rootkit** untuk memastikan router meneruskan paket antar-subnet.
+>   3. Atau tambahkan mapping IP ke `/etc/hosts` di client seperti pada langkah persiapan di atas.
+> - Jika pengujian `curl` ke Penny menghasilkan `403 Forbidden`, pastikan file `/var/www/vault/index.html` sudah ada di `obladi` dan `desmond`.
+> - Jika pengujian `curl` ke Abbey kosong atau menghasilkan `502 Bad Gateway`, pastikan service Nginx dan PHP-FPM aktif di **oblada** dan **molly** (`service nginx restart && service php8.4-fpm restart 2>/dev/null || service php-fpm restart`).
 
 ![Bukti Reverse Proxy Penny dan Abbey](Assets/11-reverse-proxy.png)
 *(Tangkapan layar hasil pengujian distribusi lalu lintas dan header forwarding dari client)*
@@ -1036,6 +1053,13 @@ Di dalam script tersebut dilakukan:
 ProxyPass /admin !
 Alias /admin /var/www/penny/admin
 
+<Directory /var/www/penny/admin>
+    Options -Indexes +FollowSymLinks
+    AllowOverride None
+    Require valid-user
+    DirectoryIndex index.html
+</Directory>
+
 <Location /admin>
     AuthType Basic
     AuthName "Dokumen Rahasia Sindikat"
@@ -1048,13 +1072,13 @@ Alias /admin /var/www/penny/admin
 Dari client (misal `gamma` atau `alpha`), lakukan pengujian dengan 3 kondisi:
 ```bash
 # 1. Tanpa kredensial -> Ditolak (HTTP 401 Unauthorized)
-curl -i http://penny.k37.com/admin
+curl -i http://penny.k37.com/admin/
 
 # 2. Password salah -> Ditolak (HTTP 401 Unauthorized)
-curl -i -u prabs:passwordsalah http://penny.k37.com/admin
+curl -i -u "prabs:passwordsalah" http://penny.k37.com/admin/
 
 # 3. Kredensial benar -> Berhasil (HTTP 200 OK)
-curl -i -u prabs:pakar_pinter_jadi_gob*** http://penny.k37.com/admin
+curl -i -u "prabs:pakar_pinter_jadi_gob***" http://penny.k37.com/admin/
 ```
 
 > **Screenshot yang harus diambil:**
