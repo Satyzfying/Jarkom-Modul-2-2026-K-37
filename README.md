@@ -1118,11 +1118,11 @@ curl -L http://penny.k37.com/
 curl -L http://abbey.k37.com/profil
 ```
 
-> **Screenshot yang harus diambil:**
-> Ambil tangkapan layar terminal client saat menjalankan `curl -i` ke `penny.k37.com` (menunjukkan status code `301 Moved Permanently`) dan ke `abbey.k37.com` (menunjukkan status code `302 Moved Temporarily / Found`). Simpan gambar sebagai `Assets/13-canonical-redirect.png`.
-
 ![Bukti Redirection Kanonik](Assets/13-canonical-redirect.png)
-*(Tangkapan layar hasil pengujian redirect 301 Penny dan redirect 302 Abbey menuju nama kanonik)*
+*(Tangkapan layar hasil pengujian status code redirect 301 Penny dan redirect 302 Abbey)*
+
+![Bukti Follow Redirect](Assets/13-follow-redirect.png)
+*(Tangkapan layar pengujian follow redirect (-L) menuju konten kanonik HTTP 200 OK)*
 
 ---
 
