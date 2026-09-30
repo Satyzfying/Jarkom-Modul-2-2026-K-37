@@ -1184,3 +1184,79 @@ Hasil curl ke `test.php` menampilkan string mentah `<?php echo "KODE PHP TIDAK D
 
 ![Bukti Jalur Khusus Eternal dan Orion](Assets/15-eternal-orion.png)
 *(Tangkapan layar hasil pengujian jalur dinamis /eternal dan jalur murni statis /orion)*
+
+---
+
+## Nomor 16
+
+## NO 17
+
+# Soal no 17
+
+Tambahkan TXT record pada DNS untuk semua klien sayap kiri dan sayap kanan (Alpha, Beta, Gamma, Delta, Epsilon). Jika DNS di-query TXT terhadap nama domain mereka (contoh: alpha.<xxxx>.com), sistem harus mengembalikan teks berupa nama hostname mereka masing-masing (contoh: "alpha").
+
+
+1. Konfigurasi pada Prab (Master)
+
+Penambahan TXT record dilakukan pada file zone DNS:
+
+/var/cache/bind/db.k37.com
+
+Record TXT yang ditambahkan adalah:
+```bash
+alpha       IN TXT "alpha"
+beta        IN TXT "beta"
+gamma       IN TXT "gamma"
+delta       IN TXT "delta"
+epsilon     IN TXT "epsilon"
+```
+Sehingga setiap hostname memiliki TXT record sesuai dengan nama hostnya.
+
+Selanjutnya, nilai serial SOA pada Prab dinaikkan dari:
+
+`2026092903` menjadi: `2026092904`
+
+Kenaikan serial dilakukan agar perubahan pada zone dapat dikenali sebagai versi terbaru oleh DNS Slave.
+
+2. Validasi Zone
+
+Setelah TXT record ditambahkan dan serial SOA diperbarui, dilakukan pengecekan menggunakan named-checkzone:
+
+`named-checkzone k37.com /var/cache/bind/db.k37.com`
+
+Hasil yang diperoleh:
+```bash
+zone k37.com/IN: loaded serial 2026092904
+OK
+```
+![alt text](Assets/17-.png)
+Hasil tersebut menunjukkan bahwa konfigurasi zone k37.com berhasil dimuat dengan serial 2026092904 dan tidak terdapat kesalahan sintaks pada zone file.
+
+3. Verifikasi TXT Record
+
+Setelah konfigurasi DNS diaktifkan kembali, dilakukan pengujian menggunakan perintah dig terhadap DNS Master Prab:
+```bash
+dig @10.82.1.2 alpha.k37.com TXT +short
+dig @10.82.1.2 beta.k37.com TXT +short
+dig @10.82.1.2 gamma.k37.com TXT +short
+dig @10.82.1.2 delta.k37.com TXT +short
+dig @10.82.1.2 epsilon.k37.com TXT +short
+```
+Hasil yang diharapkan:
+```bash
+"alpha"
+"beta"
+"gamma"
+"delta"
+"epsilon"
+```
+Dengan demikian, setiap hostname klien memiliki TXT record yang mengembalikan teks sesuai dengan nama hostname masing-masing.
+```bash
+Hostname	TXT Record
+alpha.k37.com	"alpha"
+beta.k37.com	"beta"
+gamma.k37.com	"gamma"
+delta.k37.com	"delta"
+epsilon.k37.com	"epsilon"
+```
+![alt text](Assets/17-txt-record.png)
