@@ -1081,9 +1081,6 @@ curl -i -u "prabs:passwordsalah" http://penny.k37.com/admin/
 curl -i -u "prabs:pakar_pinter_jadi_gob***" http://penny.k37.com/admin/
 ```
 
-> **Screenshot yang harus diambil:**
-> Ambil tangkapan layar terminal client yang memperlihatkan ketiga respons pengujian di atas: respons `401 Unauthorized` saat tanpa kredensial dan saat password salah, serta respons `200 OK` yang menampilkan isi dokumen rahasia saat login menggunakan kredensial `prabs`. Simpan gambar sebagai `Assets/12-basic-auth.png`.
-
 ![Bukti Basic Authentication Penny](Assets/12-basic-auth.png)
 *(Tangkapan layar pengujian HTTP Basic Auth pada path /admin dari client)*
 
