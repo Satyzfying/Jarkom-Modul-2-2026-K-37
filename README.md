@@ -10,25 +10,26 @@
 ## Daftar Isi
 
 - [Tabel Pembagian Interface & Alamat IP](#tabel-pembagian-interface--alamat-ip)
-- [Nomor 1](#nomor-1)
-- [Nomor 2](#nomor-2)
-- [Nomor 3](#nomor-3)
-- [Soal No. 4](#soal-no-4)
-- [soal no.5](#soal-no5)
-- [soal no. 6](#soal-no-6)
-- [soal no. 7](#soal-no-7)
-- [soal no.8](#soal-no8)
-- [Nomor 9](#nomor-9)
-- [Nomor 10](#nomor-10)
-- [Nomor 11](#nomor-11)
-- [Nomor 12](#nomor-12)
-- [Nomor 13](#nomor-13)
-- [Nomor 14](#nomor-14)
-- [Nomor 15](#nomor-15)
-- [Nomor 16](#nomor-16)
-- [Nomor 17](#no-17)
-- [Nomor 18](#nomor-18)
-- [Nomor 19](#nomor-19)
+- [soal 1 - Satya & Azfaro](#soal-1---satya--azfaro)
+- [soal 2 - Satya & Azfaro](#soal-2---satya--azfaro)
+- [soal 3 - Satya & Azfaro](#soal-3---satya--azfaro)
+- [soal 4 - Azfaro](#soal-4---azfaro)
+- [soal 5 - Azfaro](#soal-5---azfaro)
+- [soal 6 - Azfaro](#soal-6---azfaro)
+- [soal 7 - Azfaro](#soal-7---azfaro)
+- [soal 8 - Azfaro](#soal-8---azfaro)
+- [soal 9 - Satya](#soal-9---satya)
+- [soal 10 - Satya](#soal-10---satya)
+- [soal 11 - Satya](#soal-11---satya)
+- [soal 12 - Satya](#soal-12---satya)
+- [soal 13 - Satya](#soal-13---satya)
+- [soal 14 - Satya](#soal-14---satya)
+- [soal 15 - Satya](#soal-15---satya)
+- [soal 16 - Satya & Azfaro](#soal-16---satya--azfaro)
+- [soal 17 - Azfaro](#soal-17---azfaro)
+- [soal 18 - Azfaro](#soal-18---azfaro)
+- [soal 19 - Azfaro](#soal-19---azfaro)
+- [soal 20 - Satya & Azfaro](#soal-20---satya--azfaro)
 
 ---
 
@@ -57,7 +58,7 @@ Prefix ip : 10.82.x.x
 
 # Laporan Praktikum Modul 2
 
-## Nomor 1
+## soal 1 - Satya & Azfaro
 
 ---
 
@@ -118,7 +119,7 @@ Bukti hasil pengecekan IP dengan `ip -br a` pada `rootkit`:
 
 ---
 
-## Nomor 2
+## soal 2 - Satya & Azfaro
 
 ---
 
@@ -146,7 +147,7 @@ Bukti pengecekan aturan iptables NAT dan pengujian koneksi internet dari `rootki
 
 ---
 
-## Nomor 3
+## soal 3 - Satya & Azfaro
 
 ---
 
@@ -182,7 +183,10 @@ ping -c 3 10.82.4.2
 
 ---
 
-## Soal No. 4 
+## soal 4 - Azfaro
+
+---
+
 Penjaga Direktori mulai menuliskan hukum The Mesh. Pada node prab, bangun zona <xxxx>.com sebagai authoritative dengan SOA yang menunjuk ke prab.<xxxx>.com, serta tambahkan catatan NS untuk prab.<xxxx>.com dan tedd.<xxxx>.com. Buat A record untuk prab.<xxxx>.com dan tedd.<xxxx>.com yang mengarah ke alamat IP mereka masing-masing, serta A record apex <xxxx>.com yang mengarah ke gerbang aplikasi dinamis (penny). Aktifkan fitur notify dan allow-transfer ke tedd, lalu set forwarders ke 192.168.122.1. Di node tedd, tarik zona <xxxx>.com dari master dan pastikan server menjawab secara authoritative. Setelah fondasi nama ini berdiri kokoh, perbarui urutan resolver pada seluruh Entitas non-router menjadi: IP prab, IP tedd, lalu 192.168.122.1. Verifikasi bahwa query ke domain apex maupun hostname di dalam zona dijawab dengan benar oleh prab atau tedd. 
 
 
@@ -478,7 +482,9 @@ hasilnya seperti ini'
 
 <img src="Assets/soal4_validasi dns master.png" width="800" height="900">
 
-## soal no.5
+## soal 5 - Azfaro
+
+---
 
 Entitas tanpa identitas adalah anomali," pesan Rootkit. Namai semua Entitas (hostname) sesuai glosarium: rootkit, alpha, beta, gamma, delta, epsilon, prab, tedd, abbey, penny, obladi, desmond, oblada, molly, dan verifikasi bahwa setiap host mengenali hostname tersebut secara system-wide. Buat setiap domain untuk masing-masing node sesuai dengan namanya (contoh: alpha.<xxxx>.com) dan assign IP masing-masing juga. Lakukan pengecualian untuk node yang bertanggung jawab atas prab dan tedd
 
@@ -582,7 +588,9 @@ PING beta.k37.com (10.82.2.3) ...
 ```
 ![Assets/soal5_validasi.png](Assets/soal5_validasi.png)
 
-## soal no. 6
+## soal 6 - Azfaro
+
+---
 
 Pastikan zone transfer berjalan, pastikan tedd telah menerima salinan zona terbaru dari prab. Nilai serial SOA di keduanya harus sama karena keduanya tidak bisa dipisahkan dan saling melengkapi.
 
@@ -609,7 +617,9 @@ prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
 ```
 ![alt text](Assets/soal6.png)
 
-## soal no. 7
+## soal 7 - Azfaro
+
+---
 abbey dan penny sebagai gerbang utama, obladi dan desmond sebagai web statis, oblada dan molly sebagai web dinamis. Tambahkan pada zona <xxxx>.com A record untuk vault.<xxxx>.com (IP obladi & desmond), dan core.<xxxx>.com (IP oblada & molly). Tetapkan CNAME:
 
 
@@ -677,7 +687,9 @@ abbey.k37.com.
 
 Hasil tersebut menunjukkan bahwa vault.k37.com berhasil di-resolve ke dua alamat IP repository statis, yaitu 10.82.1.4 dan 10.82.1.5. core.k37.com berhasil di-resolve ke 10.82.1.6 dan 10.82.1.7. Selain itu, www.k37.com berhasil mengarah ke penny.k37.com, sedangkan static.k37.com mengarah ke abbey.k37.com
 
-## soal no.8
+## soal 8 - Azfaro
+
+---
  
  Di prab (ns1) deklarasikan reverse zone untuk segmen jaringan  tempat abbey, penny, area vault, dan area core berada. Di tedd (ns2) tarik reverse zone tersebut sebagai slave, isi PTR untuk keempat hostname itu agar pencarian balik IP address mengembalikan hostname yang benar, lalu pastikan query reverse untuk alamat abbey, penny, area vault, dan area core dijawab authoritative.
 
@@ -858,7 +870,7 @@ penny.k37.com.
 ```
 ---
 
-## Nomor 9 - Satya
+## soal 9 - Satya
 
 ---
 
@@ -917,7 +929,7 @@ curl -i http://vault.k37.com/
 
 ---
 
-## Nomor 10
+## soal 10 - Satya
 
 ---
 
@@ -975,7 +987,7 @@ curl -i http://core.k37.com/profil
 
 ---
 
-## Nomor 11
+## soal 11 - Satya
 
 ---
 
@@ -1035,7 +1047,7 @@ Respons bergantian dijawab oleh `oblada` dan `molly`, serta header `Host` tercat
 
 ---
 
-## Nomor 12
+## soal 12 - Satya
 
 ---
 
@@ -1090,7 +1102,7 @@ curl -i -u "prabs:pakar_pinter_jadi_gob***" http://penny.k37.com/admin/
 
 ---
 
-## Nomor 13
+## soal 13 - Satya
 
 ---
 
@@ -1130,7 +1142,7 @@ curl -L http://abbey.k37.com/profil
 
 ---
 
-## Nomor 14
+## soal 14 - Satya
 
 ---
 
@@ -1170,7 +1182,7 @@ curl -s http://static.k37.com/profil
 
 ---
 
-## Nomor 15
+## soal 15 - Satya
 
 ---
 
@@ -1209,7 +1221,7 @@ Hasil curl ke `test.php` menampilkan string mentah `<?php echo "KODE PHP TIDAK D
 
 ---
 
-## Nomor 16
+## soal 16 - Satya & Azfaro
 
 ---
 
@@ -1259,7 +1271,9 @@ Berdasarkan hasil pengujian ApacheBench:
 ---
 
 
-## Soal no 17
+## soal 17 - Azfaro
+
+---
 
 Tambahkan TXT record pada DNS untuk semua klien sayap kiri dan sayap kanan (Alpha, Beta, Gamma, Delta, Epsilon). Jika DNS di-query TXT terhadap nama domain mereka (contoh: alpha.<xxxx>.com), sistem harus mengembalikan teks berupa nama hostname mereka masing-masing (contoh: "alpha").
 
@@ -1330,7 +1344,7 @@ epsilon.k37.com	"epsilon"
 ![alt text](Assets/17-txt-record.png)
 ---
 
-## Nomor 18
+## soal 18 - Azfaro
 
 Ubah A record DNS milik `abbey.xxx.com` (`abbey.k37.com`) ke alamat IP yang fiktif (ubah secara random namun pastikan format IP valid). Naikkan nilai serial SOA di prab dan pastikan tedd ikut tersinkron. Tetapkan TTL sebesar 15 detik pada record yang relevan tersebut. Verifikasi momen yang terjadi pada tiga fase pencarian: sebelum perubahan terjadi (mengembalikan IP lama), saat perubahan baru saja terjadi dalam jeda 15 detik (masih IP lama karena cache), dan setelah batas waktu TTL habis (berubah ke IP fiktif yang baru).
 
@@ -1423,7 +1437,7 @@ Untuk membuktikan mekanisme *caching* dan siklus hidup TTL (Time to Live) 15 det
 
 ---
 
-## Nomor 19
+## soal 19 - Azfaro
 
 Buat CNAME record yang melakukan binding dari domain internal `outbound.xxx.com` (`outbound.k37.com`) menuju domain eksternal `http.badssl.com`. Lakukan perintah curl ke `http://outbound.xxx.com` dan pastikan output yang dihasilkan sesuai dengan isi konten di halaman `http.badssl.com`.
 
@@ -1521,7 +1535,7 @@ named -c /etc/bind/named.conf
 
 ---
 
-## Nomor 20
+## soal 20 - Satya & Azfaro
 
 ---
 
