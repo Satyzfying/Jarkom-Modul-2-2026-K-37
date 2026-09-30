@@ -178,7 +178,7 @@ ping -c 3 10.82.4.2
 
 ---
 
-# Soal No. 4 
+## Soal No. 4 
 Penjaga Direktori mulai menuliskan hukum The Mesh. Pada node prab, bangun zona <xxxx>.com sebagai authoritative dengan SOA yang menunjuk ke prab.<xxxx>.com, serta tambahkan catatan NS untuk prab.<xxxx>.com dan tedd.<xxxx>.com. Buat A record untuk prab.<xxxx>.com dan tedd.<xxxx>.com yang mengarah ke alamat IP mereka masing-masing, serta A record apex <xxxx>.com yang mengarah ke gerbang aplikasi dinamis (penny). Aktifkan fitur notify dan allow-transfer ke tedd, lalu set forwarders ke 192.168.122.1. Di node tedd, tarik zona <xxxx>.com dari master dan pastikan server menjawab secara authoritative. Setelah fondasi nama ini berdiri kokoh, perbarui urutan resolver pada seluruh Entitas non-router menjadi: IP prab, IP tedd, lalu 192.168.122.1. Verifikasi bahwa query ke domain apex maupun hostname di dalam zona dijawab dengan benar oleh prab atau tedd. 
 
 
@@ -474,7 +474,7 @@ hasilnya seperti ini'
 
 <img src="Assets/soal4_validasi dns master.png" width="800" height="900">
 
-# soal no.5
+## soal no.5
 
 Entitas tanpa identitas adalah anomali," pesan Rootkit. Namai semua Entitas (hostname) sesuai glosarium: rootkit, alpha, beta, gamma, delta, epsilon, prab, tedd, abbey, penny, obladi, desmond, oblada, molly, dan verifikasi bahwa setiap host mengenali hostname tersebut secara system-wide. Buat setiap domain untuk masing-masing node sesuai dengan namanya (contoh: alpha.<xxxx>.com) dan assign IP masing-masing juga. Lakukan pengecualian untuk node yang bertanggung jawab atas prab dan tedd
 
@@ -578,7 +578,7 @@ PING beta.k37.com (10.82.2.3) ...
 ```
 ![Assets/soal5_validasi.png](Assets/soal5_validasi.png)
 
-# soal no. 6
+## soal no. 6
 
 Pastikan zone transfer berjalan, pastikan tedd telah menerima salinan zona terbaru dari prab. Nilai serial SOA di keduanya harus sama karena keduanya tidak bisa dipisahkan dan saling melengkapi.
 
@@ -605,7 +605,7 @@ prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
 ```
 ![alt text](Assets/soal6.png)
 
-# soal no. 7
+## soal no. 7
 abbey dan penny sebagai gerbang utama, obladi dan desmond sebagai web statis, oblada dan molly sebagai web dinamis. Tambahkan pada zona <xxxx>.com A record untuk vault.<xxxx>.com (IP obladi & desmond), dan core.<xxxx>.com (IP oblada & molly). Tetapkan CNAME:
 
 
@@ -673,7 +673,7 @@ abbey.k37.com.
 
 Hasil tersebut menunjukkan bahwa vault.k37.com berhasil di-resolve ke dua alamat IP repository statis, yaitu 10.82.1.4 dan 10.82.1.5. core.k37.com berhasil di-resolve ke 10.82.1.6 dan 10.82.1.7. Selain itu, www.k37.com berhasil mengarah ke penny.k37.com, sedangkan static.k37.com mengarah ke abbey.k37.com
 
-# soal no.8
+## soal no.8
  
  Di prab (ns1) deklarasikan reverse zone untuk segmen jaringan  tempat abbey, penny, area vault, dan area core berada. Di tedd (ns2) tarik reverse zone tersebut sebagai slave, isi PTR untuk keempat hostname itu agar pencarian balik IP address mengembalikan hostname yang benar, lalu pastikan query reverse untuk alamat abbey, penny, area vault, dan area core dijawab authoritative.
 
@@ -1188,3 +1188,78 @@ curl -s http://static.k37.com/orion/
 curl -s http://static.k37.com/orion/test.php
 ```
 Hasil curl ke `test.php` menampilkan string mentah `<?php echo "KODE PHP TIDAK DIRENDER - MURNI STATIS"; ?>`, membuktikan bahwa interpreter PHP tidak dijalankan pada jalur tersebut.
+
+
+## Nomor 16
+
+## NO 17
+
+# Soal no 17
+
+Tambahkan TXT record pada DNS untuk semua klien sayap kiri dan sayap kanan (Alpha, Beta, Gamma, Delta, Epsilon). Jika DNS di-query TXT terhadap nama domain mereka (contoh: alpha.<xxxx>.com), sistem harus mengembalikan teks berupa nama hostname mereka masing-masing (contoh: "alpha").
+
+
+1. Konfigurasi pada Prab (Master)
+
+Penambahan TXT record dilakukan pada file zone DNS:
+
+/var/cache/bind/db.k37.com
+
+Record TXT yang ditambahkan adalah:
+```bash
+alpha       IN TXT "alpha"
+beta        IN TXT "beta"
+gamma       IN TXT "gamma"
+delta       IN TXT "delta"
+epsilon     IN TXT "epsilon"
+```
+Sehingga setiap hostname memiliki TXT record sesuai dengan nama hostnya.
+
+Selanjutnya, nilai serial SOA pada Prab dinaikkan dari:
+
+`2026092903` menjadi: `2026092904`
+
+Kenaikan serial dilakukan agar perubahan pada zone dapat dikenali sebagai versi terbaru oleh DNS Slave.
+
+2. Validasi Zone
+
+Setelah TXT record ditambahkan dan serial SOA diperbarui, dilakukan pengecekan menggunakan named-checkzone:
+
+`named-checkzone k37.com /var/cache/bind/db.k37.com`
+
+Hasil yang diperoleh:
+```bash
+zone k37.com/IN: loaded serial 2026092904
+OK
+```
+![alt text](Assets/17-.png)
+Hasil tersebut menunjukkan bahwa konfigurasi zone k37.com berhasil dimuat dengan serial 2026092904 dan tidak terdapat kesalahan sintaks pada zone file.
+
+3. Verifikasi TXT Record
+
+Setelah konfigurasi DNS diaktifkan kembali, dilakukan pengujian menggunakan perintah dig terhadap DNS Master Prab:
+```bash
+dig @10.82.1.2 alpha.k37.com TXT +short
+dig @10.82.1.2 beta.k37.com TXT +short
+dig @10.82.1.2 gamma.k37.com TXT +short
+dig @10.82.1.2 delta.k37.com TXT +short
+dig @10.82.1.2 epsilon.k37.com TXT +short
+```
+Hasil yang diharapkan:
+```bash
+"alpha"
+"beta"
+"gamma"
+"delta"
+"epsilon"
+```
+Dengan demikian, setiap hostname klien memiliki TXT record yang mengembalikan teks sesuai dengan nama hostname masing-masing.
+```bash
+Hostname	TXT Record
+alpha.k37.com	"alpha"
+beta.k37.com	"beta"
+gamma.k37.com	"gamma"
+delta.k37.com	"delta"
+epsilon.k37.com	"epsilon"
+```
+![alt text](Assets/17-txt-record.png)
