@@ -25,6 +25,10 @@
 - [Nomor 13](#nomor-13)
 - [Nomor 14](#nomor-14)
 - [Nomor 15](#nomor-15)
+- [Nomor 16](#nomor-16)
+- [Nomor 17](#no-17)
+- [Nomor 18](#nomor-18)
+- [Nomor 19](#nomor-19)
 
 ---
 
@@ -1324,7 +1328,193 @@ delta.k37.com	"delta"
 epsilon.k37.com	"epsilon"
 ```
 ![alt text](Assets/17-txt-record.png)
+---
 
-## no 18
-Ubah A record DNS milik abbey.xxx.com ke alamat IP yang fiktif (ubah secara random namun pastikan format IP valid). Naikkan nilai serial SOA di prab dan pastikan tedd ikut tersinkron. Tetapkan TTL sebesar 15 detik pada record yang relevan tersebut. Verifikasi momen yang terjadi pada tiga fase pencarian: sebelum perubahan terjadi (mengembalikan IP lama), saat perubahan baru saja terjadi dalam jeda 15 detik (masih IP lama karena cache), dan setelah batas waktu TTL habis (berubah ke IP fiktif yang baru). 
+## Nomor 18
 
+Ubah A record DNS milik `abbey.xxx.com` (`abbey.k37.com`) ke alamat IP yang fiktif (ubah secara random namun pastikan format IP valid). Naikkan nilai serial SOA di prab dan pastikan tedd ikut tersinkron. Tetapkan TTL sebesar 15 detik pada record yang relevan tersebut. Verifikasi momen yang terjadi pada tiga fase pencarian: sebelum perubahan terjadi (mengembalikan IP lama), saat perubahan baru saja terjadi dalam jeda 15 detik (masih IP lama karena cache), dan setelah batas waktu TTL habis (berubah ke IP fiktif yang baru).
+
+Script konfigurasi dan pengujian disimpan di [`scripts/soal18.sh`](scripts/soal18.sh).
+
+### 1. Konfigurasi pada Prab (Master DNS)
+
+File zone yang digunakan adalah `/var/cache/bind/db.k37.com`.
+
+Sebelum dilakukan perubahan, isi zone file memiliki konfigurasi default dengan serial SOA awal dan A record `abbey` mengarah ke IP aslinya `10.82.4.2`:
+
+![Konfigurasi Awal Zone Prab](Assets/18-zone-prab-awal.png)
+*(Tangkapan layar konfigurasi awal `/var/cache/bind/db.k37.com` dengan serial SOA awal dan IP abbey lama 10.82.4.2)*
+
+Perubahan yang dilakukan pada Prab:
+1. **Menaikkan Serial SOA**: Serial SOA dinaikkan (dari serial awal menjadi `2026092909` / `2026093008`) agar perubahan dikenali oleh DNS Slave (Tedd) dan memicu sinkronisasi zone transfer.
+2. **Mengubah Record Abbey dengan TTL 15 Detik**: Nilai TTL disetel khusus sebesar 15 detik pada record `abbey`, dan alamat IP diubah ke IP fiktif valid, yaitu `10.82.4.50`:
+   ```text
+   abbey    15    IN    A    10.82.4.50
+   ```
+
+![Perubahan Serial SOA dan IP Fiktif Abbey](Assets/18-zone-prab-fiktif.png)
+*(Tangkapan layar pengeditan `/var/cache/bind/db.k37.com` dengan kenaikan serial SOA dan IP fiktif 10.82.4.50)*
+
+Setelah file zone diperbarui, sintaks zone file divalidasi menggunakan perintah:
+```bash
+named-checkzone k37.com /var/cache/bind/db.k37.com
+```
+Lalu reload layanan BIND pada Prab:
+```bash
+pkill named
+named -c /etc/bind/named.conf
+```
+
+---
+
+### 2. Sinkronisasi pada Tedd (Slave DNS)
+
+Pada server DNS Slave (`tedd`, IP `10.82.1.3`), BIND secara otomatis menerima sinyal notifikasi perubahan dari Prab dan menarik data zone terbaru (*zone transfer*). Dilakukan verifikasi menggunakan `dig`:
+```bash
+dig @10.82.1.3 abbey.k37.com A +noall +answer
+dig @10.82.1.3 k37.com SOA +noall +answer
+```
+Hasil verifikasi menunjukkan bahwa Tedd telah tersinkronisasi sepenuhnya:
+- Record `abbey.k37.com.` memiliki TTL `15` detik dan mengarah ke IP baru `10.82.4.50`.
+- Serial SOA pada domain `k37.com.` terupdate menjadi serial baru (`2026092909`).
+
+![Sinkronisasi Tedd dan TTL 15 Detik](Assets/18-tedd-sync-ttl15.png)
+*(Tangkapan layar verifikasi sinkronisasi pada Slave Tedd dengan serial SOA baru dan record abbey ber-TTL 15 detik)*
+
+---
+
+### 3. Verifikasi Tiga Fase Pencarian (DNS Caching)
+
+Untuk membuktikan mekanisme *caching* dan siklus hidup TTL (Time to Live) 15 detik, dilakukan pengamatan pada tiga fase resolusi DNS:
+
+1. **Fase 1: Sebelum Perubahan Terjadi (Mengembalikan IP Lama)**
+   Sebelum zone diperbarui/di-reload, query DNS terhadap `abbey.k37.com` mengembalikan IP lama server Abbey (`10.82.4.2`) dengan TTL standar zone (300 detik).
+   ```bash
+   dig @10.82.1.2 abbey.k37.com A +noall +answer
+   ```
+   *Output:*
+   ```text
+   abbey.k37.com.          300     IN      A       10.82.4.2
+   ```
+   ![Fase 1 Sebelum Perubahan](Assets/18-sebelum-perubahan.png)
+   *(Tangkapan layar Fase 1: Query awal mengembalikan alamat IP lama 10.82.4.2)*
+
+2. **Fase 2: Saat Perubahan Baru Saja Terjadi dalam Jeda 15 Detik (Masih IP Lama karena Cache)**
+   Ketika data record pada file zone telah diubah menjadi IP fiktif (`10.82.4.50`) dan serial SOA telah dinaikkan, query yang dilakukan dalam jeda waktu sebelum masa cache DNS lokal kedaluwarsa masih mengembalikan IP lama (`10.82.4.2`). Hal ini membuktikan bahwa resolver memanfaatkan entri cache yang masih valid dan belum melakukan permintaan ulang ke zone data yang baru.
+   ```bash
+   # Bukti file zone sudah berisi IP fiktif 10.82.4.50
+   grep -n 'abbey' /var/cache/bind/db.k37.com
+   # 23:abbey          IN      A       10.82.4.50
+
+   # Query dig saat jeda waktu (masih menghasilkan IP lama dari cache)
+   dig @10.82.1.2 abbey.k37.com A +noall +answer
+   # abbey.k37.com.          300     IN      A       10.82.4.2
+   ```
+   ![Fase 2 DNS Caching](Assets/18-fase-cache-prab.png)
+   *(Tangkapan layar Fase 2: File zone telah memuat IP baru, namun query dig sesaat setelahnya masih merespons dengan IP lama 10.82.4.2 akibat cache)*
+
+3. **Fase 3: Setelah Batas Waktu TTL Habis (Berubah ke IP Fiktif yang Baru)**
+   Setelah batas waktu TTL (15 detik) berakhir, cache pada resolver kedaluwarsa (*expired*). Query berikutnya memaksa nameserver memberikan data autoritatif terbaru. Hasil resolusi DNS secara otomatis beralih menampilkan alamat IP fiktif yang baru (`10.82.4.50`) dengan nilai TTL 15 detik, baik pada Master DNS (`prab`) maupun Slave DNS (`tedd`).
+   ```bash
+   # Setelah jeda TTL (15 detik)
+   dig @10.82.1.3 abbey.k37.com A +noall +answer
+   # abbey.k37.com.           15     IN      A       10.82.4.50
+   ```
+
+---
+
+## Nomor 19
+
+Buat CNAME record yang melakukan binding dari domain internal `outbound.xxx.com` (`outbound.k37.com`) menuju domain eksternal `http.badssl.com`. Lakukan perintah curl ke `http://outbound.xxx.com` dan pastikan output yang dihasilkan sesuai dengan isi konten di halaman `http.badssl.com`.
+
+Script konfigurasi dan pengujian disimpan di [`scripts/soal19.sh`](scripts/soal19.sh).
+
+### 1. Konfigurasi DNS Options (Forwarders & Rekursi)
+
+Agar server DNS BIND dapat menyelesaikan nama domain eksternal (`http.badssl.com`) yang direferensikan oleh CNAME, opsi `recursion` dan `forwarders` harus diaktifkan pada file `/etc/bind/named.conf.options`:
+```text
+options {
+    directory "/var/cache/bind";
+
+    forwarders {
+        192.168.122.1;
+    };
+
+    recursion yes;
+};
+```
+Konfigurasi ini memungkinkan Prab meneruskan (*forward*) pencarian rekursif untuk domain publik di luar zone lokal ke gateway/upstream DNS.
+
+---
+
+### 2. Penambahan CNAME Record pada Prab (Master DNS)
+
+Pada file zone `/var/cache/bind/db.k37.com`, ditambahkan record CNAME yang memetakan subdomain internal `outbound` ke domain publik eksternal `http.badssl.com.`:
+```text
+outbound    IN    CNAME    http.badssl.com.
+```
+*(Catatan: tanda titik di akhir `http.badssl.com.` adalah FQDN absolut agar BIND tidak menambahkan suffix `.k37.com` di belakangnya).*
+
+Setelah itu, konfigurasi divalidasi dan service BIND di-restart:
+```bash
+named-checkconf /etc/bind/named.conf
+named-checkzone k37.com /var/cache/bind/db.k37.com
+pkill named
+named -c /etc/bind/named.conf
+```
+
+---
+
+### 3. Pengujian dan Verifikasi
+
+1. **Verifikasi Record CNAME:**
+   Dilakukan pengecekan resolusi CNAME pada server Prab menggunakan perintah `dig`:
+   ```bash
+   dig @10.82.1.2 outbound.k37.com CNAME +noall +answer
+   ```
+   Hasil yang diperoleh:
+   ```text
+   outbound.k37.com.       300     IN      CNAME   http.badssl.com.
+   ```
+   Hal ini membuktikan bahwa binding dari domain internal `outbound.k37.com` ke domain eksternal `http.badssl.com` telah berhasil.
+
+   ![Verifikasi CNAME Outbound](Assets/19-cname-outbound.png)
+   *(Tangkapan layar restart service BIND dan verifikasi query CNAME outbound.k37.com mengarah ke http.badssl.com.)*
+
+2. **Verifikasi Konten Web menggunakan `curl`:**
+   Dilakukan perintah HTTP request menggunakan `curl` ke domain internal:
+   ```bash
+   curl http://outbound.k37.com
+   ```
+   Respons yang diterima adalah struktur HTML lengkap dari situs `http.badssl.com`:
+   ```html
+   <!DOCTYPE html>
+   <html>
+   <head>
+   <title>Welcome to nginx!</title>
+   <style>
+       body {
+           width: 35em;
+           margin: 0 auto;
+           font-family: Tahoma, Verdana, Arial, sans-serif;
+       }
+   </style>
+   </head>
+   <body>
+   <h1>Welcome to nginx!</h1>
+   <p>If you see this page, the nginx web server is successfully installed and
+   working. Further configuration is required.</p>
+
+   <p>For online documentation and support please refer to
+   <a href="http://nginx.org/">nginx.org</a>.<br/>
+   Commercial support is available at
+   <a href="http://nginx.com/">nginx.com</a>.</p>
+
+   <p><em>Thank you for using nginx.</em></p>
+   </body>
+   </html>
+   ```
+   Hasil output tersebut identik dengan halaman `http://http.badssl.com/`, membuktikan bahwa domain internal `outbound.k37.com` berhasil me-resolve dan mengakses web server eksternal tersebut secara transparan.
+
+   ![Hasil Curl Outbound](Assets/19-curl-outbound.png)
+   *(Tangkapan layar hasil curl http://outbound.k37.com yang menampilkan konten halaman http.badssl.com)*
