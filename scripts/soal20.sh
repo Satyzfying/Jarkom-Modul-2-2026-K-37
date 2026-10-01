@@ -21,6 +21,8 @@ echo "service bind9 start 2>/dev/null || service named start 2>/dev/null || name
 
 
 # ==== ROOTKIT ====
+echo "ip addr add 192.168.122.50/24 dev eth0 2>/dev/null || true" >> /root/.bashrc
+echo "ip route add default via 192.168.122.1 2>/dev/null || true" >> /root/.bashrc
 echo "sysctl -w net.ipv4.ip_forward=1" >> /root/.bashrc
 echo "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE" >> /root/.bashrc
 
