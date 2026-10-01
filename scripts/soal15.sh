@@ -1,9 +1,12 @@
 #!/bin/bash
 
 # ==== PENNY ====
+# Bypass valid-until untuk Debian Security repo jika simulasi tahun 2026
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+
 apt-get update
-apt-get install -y php-fpm
-a2enmod proxy_fcgi
+apt-get install -y apache2 php-fpm
+a2enmod rewrite proxy proxy_http proxy_balancer lbmethod_byrequests slotmem_shm headers proxy_fcgi 2>/dev/null || true
 
 PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.4")
 service "php${PHP_VER}-fpm" start 2>/dev/null || service php8.4-fpm start 2>/dev/null || service php8.2-fpm start 2>/dev/null || service php-fpm start 2>/dev/null
@@ -86,10 +89,18 @@ cat <<EOF > /etc/apache2/sites-available/penny.conf
 </VirtualHost>
 EOF
 
+a2dissite 000-default.conf 2>/dev/null || true
+a2ensite penny.conf
 service apache2 restart
 
 
 # ==== ABBEY ====
+# Bypass valid-until untuk Debian Security repo jika simulasi tahun 2026
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+
+apt-get update
+apt-get install -y nginx
+
 mkdir -p /var/www/orion
 echo "<h1>Jalur Orion Statis</h1>" > /var/www/orion/index.html
 echo '<?php echo "KODE PHP TIDAK DIRENDER - MURNI STATIS"; ?>' > /var/www/orion/test.php
@@ -132,4 +143,6 @@ server {
 }
 EOF
 
+ln -sf /etc/nginx/sites-available/abbey /etc/nginx/sites-enabled/abbey
+rm -f /etc/nginx/sites-enabled/default
 nginx -t && service nginx restart

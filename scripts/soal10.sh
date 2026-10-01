@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # ==== OBLADA ====
+# Bypass valid-until untuk Debian Security repo jika simulasi tahun 2026
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+
 apt-get update
 apt-get install -y nginx php-fpm
 
@@ -74,6 +77,9 @@ nginx -t && service nginx restart
 
 
 # ==== MOLLY ====
+# Bypass valid-until untuk Debian Security repo jika simulasi tahun 2026
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+
 apt-get update
 apt-get install -y nginx php-fpm
 
