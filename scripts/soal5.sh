@@ -31,4 +31,5 @@ molly       IN  A   10.82.1.7
 EOF
 
 named-checkzone k37.com /var/cache/bind/db.k37.com
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 

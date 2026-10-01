@@ -10,16 +10,11 @@ EOF
 
 
 
-sed -i 's/2026092903/2026092904/' /var/cache/bind/db.k37.com
+SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
+[ -n "$SERIAL_OLD" ] && sed -i "s/$SERIAL_OLD/$((SERIAL_OLD + 1))/" /var/cache/bind/db.k37.com
 
 tail -10 /var/cache/bind/db.k37.com
 
 named-checkzone k37.com /var/cache/bind/db.k37.com
 
-pkill named
-
-named -c /etc/bind/named.conf
-
-ps aux | grep '[n]amed'
-
-named -c /etc/bind/named.conf
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
