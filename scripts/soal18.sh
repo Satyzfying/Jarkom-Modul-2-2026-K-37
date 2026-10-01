@@ -5,15 +5,16 @@
 #    - Ubah A record abbey menjadi IP fiktif (10.82.4.50) dengan TTL 15 detik:
 #      abbey    15    IN    A    10.82.4.50
 
-sed -i 's/2026092904/2026092909/' /var/cache/bind/db.k37.com
-sed -i 's/abbey.*IN.*A.*/abbey    15    IN    A    10.82.4.50/' /var/cache/bind/db.k37.com
+# Naikkan serial SOA
+SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
+[ -n "$SERIAL_OLD" ] && sed -i "s/$SERIAL_OLD/$((SERIAL_OLD + 1))/" /var/cache/bind/db.k37.com
+sed -i 's/^abbey.*/abbey    15    IN    A    10.82.4.50/' /var/cache/bind/db.k37.com
 
 # Validasi syntax zone file
 named-checkzone k37.com /var/cache/bind/db.k37.com
 
 # Reload BIND pada Prab
-pkill named
-named -c /etc/bind/named.conf
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 
 # ==== TEDD (SLAVE DNS) ====
 # Verifikasi sinkronisasi zone transfer ke Tedd

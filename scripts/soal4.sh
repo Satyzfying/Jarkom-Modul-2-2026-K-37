@@ -10,6 +10,8 @@ options {
     192.168.122.1;
   };
 
+  allow-query { any; };
+  allow-recursion { any; };
   recursion yes;
 };
 

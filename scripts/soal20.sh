@@ -2,22 +2,22 @@
 
 # ==== PRAB (MASTER DNS) ====
 # 1. Kembalikan A record abbey ke IP asli (10.82.4.2)
-sed -i 's/abbey.*IN.*A.*/abbey       IN  A   10.82.4.2/' /var/cache/bind/db.k37.com
+sed -i 's/^abbey.*/abbey       IN  A   10.82.4.2/' /var/cache/bind/db.k37.com
 
 # 2. Naikkan serial SOA
-sed -i 's/2026092909/2026092910/' /var/cache/bind/db.k37.com
+SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
+[ -n "$SERIAL_OLD" ] && sed -i "s/$SERIAL_OLD/$((SERIAL_OLD + 1))/" /var/cache/bind/db.k37.com
 
 # 3. Validasi & reload BIND
 named-checkzone k37.com /var/cache/bind/db.k37.com
-pkill named
-named -c /etc/bind/named.conf
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 
 # 4. Autostart BIND pada Prab
-echo "named -c /etc/bind/named.conf" >> /root/.bashrc
+echo "service bind9 start 2>/dev/null || service named start 2>/dev/null || named -c /etc/bind/named.conf" >> /root/.bashrc
 
 
 # ==== TEDD (SLAVE DNS) ====
-echo "named -c /etc/bind/named.conf" >> /root/.bashrc
+echo "service bind9 start 2>/dev/null || service named start 2>/dev/null || named -c /etc/bind/named.conf" >> /root/.bashrc
 
 
 # ==== ROOTKIT ====
