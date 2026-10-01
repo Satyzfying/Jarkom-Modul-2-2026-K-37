@@ -1,4 +1,6 @@
 # ==== PRAB & TEDD ====
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+sed -i '/security/s/^/#/' /etc/apt/sources.list 2>/dev/null || true
 apt update
 apt install bind9 bind9-utils bind9-dnsutils -y
 

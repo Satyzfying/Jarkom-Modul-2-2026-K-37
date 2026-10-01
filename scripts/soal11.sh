@@ -6,6 +6,8 @@
 # Di rootkit : sysctl -w net.ipv4.ip_forward=1 && iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 # ==== PENNY ====
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+sed -i '/security/s/^/#/' /etc/apt/sources.list 2>/dev/null || true
 apt-get update
 apt-get install -y apache2
 a2enmod proxy proxy_http proxy_balancer lbmethod_byrequests lbmethod_bytraffic lbmethod_bybusyness slotmem_shm headers
@@ -38,6 +40,8 @@ service apache2 restart
 
 
 # ==== ABBEY ====
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+sed -i '/security/s/^/#/' /etc/apt/sources.list 2>/dev/null || true
 apt-get update
 apt-get install -y nginx
 

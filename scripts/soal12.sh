@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # ==== PENNY ====
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+sed -i '/security/s/^/#/' /etc/apt/sources.list 2>/dev/null || true
 apt-get update
 apt-get install -y apache2-utils
 a2enmod auth_basic authn_file authz_user
