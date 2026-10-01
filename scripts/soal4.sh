@@ -80,7 +80,7 @@ named-checkconf
 named -c /etc/bind/named.conf
 ls -l /var/cache/bind/
 
-master
+# Verifikasi zone transfer ke Slave (Tedd)
 dig @10.82.1.3 k37.com SOA +short
 dig @10.82.1.3 abbey.k37.com A +short
 

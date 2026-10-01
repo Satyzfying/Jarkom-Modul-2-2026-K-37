@@ -20,13 +20,16 @@ cat >> /var/cache/bind/db.k37.com <<'EOF'
 outbound    IN    CNAME    http.badssl.com.
 EOF
 
+# Naikkan serial SOA
+SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
+[ -n "$SERIAL_OLD" ] && sed -i "s/$SERIAL_OLD/$((SERIAL_OLD + 1))/" /var/cache/bind/db.k37.com
+
 # Validasi konfigurasi zone
 named-checkconf /etc/bind/named.conf
 named-checkzone k37.com /var/cache/bind/db.k37.com
 
 # Reload service BIND
-pkill named
-named -c /etc/bind/named.conf
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 
 # ==== PENGUJIAN ====
 # 1. Verifikasi CNAME record menggunakan dig

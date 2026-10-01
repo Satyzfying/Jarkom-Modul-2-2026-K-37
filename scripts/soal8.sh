@@ -1,4 +1,21 @@
 # ============================================================
+# KONFIGURASI UMUM
+# ============================================================
+BIND_DIR="/etc/bind"
+CACHE_DIR="/var/cache/bind"
+DOMAIN="k37.com"
+PRAB_IP="10.82.1.2"
+TEDD_IP="10.82.1.3"
+
+stop_named() {
+    service bind9 stop 2>/dev/null || service named stop 2>/dev/null || pkill named 2>/dev/null || true
+}
+
+start_named() {
+    service bind9 start 2>/dev/null || service named start 2>/dev/null || named -c /etc/bind/named.conf
+}
+
+# ============================================================
 # KONFIGURASI PRAB - MASTER
 # ============================================================
 if [ "$(hostname)" = "prab" ]; then
