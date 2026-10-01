@@ -1526,6 +1526,11 @@ Perintah inisialisasi dimasukkan ke file `/root/.bashrc` pada masing-masing node
    ```bash
    echo "ip addr add 192.168.122.50/24 dev eth0 2>/dev/null || true" >> /root/.bashrc
    echo "ip route add default via 192.168.122.1 2>/dev/null || true" >> /root/.bashrc
+   echo "ip addr add 10.82.1.1/24 dev eth1 2>/dev/null || true; ip link set eth1 up" >> /root/.bashrc
+   echo "ip addr add 10.82.2.1/24 dev eth2 2>/dev/null || true; ip link set eth2 up" >> /root/.bashrc
+   echo "ip addr add 10.82.3.1/24 dev eth3 2>/dev/null || true; ip link set eth3 up" >> /root/.bashrc
+   echo "ip addr add 10.82.4.1/24 dev eth4 2>/dev/null || true; ip link set eth4 up" >> /root/.bashrc
+   echo "ip addr add 10.82.5.1/24 dev eth5 2>/dev/null || true; ip link set eth5 up" >> /root/.bashrc
    echo "sysctl -w net.ipv4.ip_forward=1" >> /root/.bashrc
    echo "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE" >> /root/.bashrc
    ```
