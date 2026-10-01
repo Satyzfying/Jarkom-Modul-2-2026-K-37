@@ -1385,8 +1385,13 @@ Untuk membuktikan mekanisme *caching* dan siklus hidup TTL (Time to Live) 15 det
    ```bash
    # Setelah jeda TTL (15 detik)
    dig @10.82.1.3 abbey.k37.com A +noall +answer
-   # abbey.k37.com.           15     IN      A       10.82.4.50
    ```
+   *Output:*
+   ```text
+   abbey.k37.com.           15     IN      A       10.82.4.50
+   ```
+   ![Fase 3 Setelah Batas TTL Habis](Assets/18-tedd-sync-ttl15.png)
+   *(Tangkapan layar Fase 3: Query pada Slave Tedd setelah jeda TTL kedaluwarsa mengembalikan IP fiktif 10.82.4.50 dengan TTL spesifik 15 detik dan serial SOA sinkron 2026092909)*
 
 ---
 
