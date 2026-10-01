@@ -203,21 +203,20 @@ Konfigurasi yang dilakukan meliputi:
 - Konfigurasi resolver pada host
 ---
 
-### konfigurasi dns master pada prab
-Instalasi pada prab
+Script konfigurasi disimpan di [`scripts/soal4.sh`](scripts/soal4.sh).
+
+### Konfigurasi DNS Master pada Prab
+Instalasi paket BIND9 pada `prab`:
 ```bash
 apt update
 apt install bind9 bind9-utils bind9-dnsutils -y
 ```
+
 1. Konfigurasi `named.conf.options`
 
-Pada konfigurasi ini, DNS diarahkan untuk menggunakan 192.168.122.1 sebagai DNS forwarder dan mengaktifkan recursive query, sehingga server dapat meneruskan permintaan DNS yang tidak dapat diselesaikan oleh DNS internal ke DNS forwarde
+Pada konfigurasi ini, DNS diarahkan untuk menggunakan `192.168.122.1` sebagai DNS forwarder dan mengaktifkan query/rekursi terbuka (`allow-query { any; };`), sehingga client pada subnet lain dapat melakukan query DNS:
 ```bash
-root@prab:~# cat > /etc/bind/named.conf.options <<'EOF'
-
-> cat > /etc/bind/named.conf.options <<'EOF'
-
-cat > /etc/bind/named.conf.options <<'EOF'
+cat <<EOF > /etc/bind/named.conf.options
 options {
   directory "/var/cache/bind";
 
@@ -225,6 +224,8 @@ options {
     192.168.122.1;
   };
 
+  allow-query { any; };
+  allow-recursion { any; };
   recursion yes;
 };
 EOF
@@ -238,7 +239,7 @@ setelah itu kita validasi konfigurasinya memakai `named-checkconf`
 
 Tujuan konfigurasi named.conf.local adalah untuk mendaftarkan dan mengatur zone DNS k37.com pada server prab sebagai DNS Master.
 ```bash
-root@prab:~# cat > /etc/bind/named.conf.local <<'EOF'
+cat <<EOF > /etc/bind/named.conf.local
 zone "k37.com" {
   type master;
   file "/var/cache/bind/db.k37.com";
@@ -255,10 +256,10 @@ EOF
 
 ### Membuat Zone File `k37.com`
 
-pembuatan zone file k37.com adalah untuk mendefinisikan informasi DNS untuk domain k37.com, seperti SOA, NS, dan A record Zone file ini menentukan `prab` sebagai DNS Master, `tedd` sebagai DNS Slave, serta mengarahkan domain `k37.com` ke IP `10.82.5.2` milik `penny
+Pembuatan zone file `k37.com` adalah untuk mendefinisikan informasi DNS untuk domain `k37.com`, seperti SOA, NS, dan A record. Zone file ini menentukan `prab` sebagai DNS Master, `tedd` sebagai DNS Slave, serta mengarahkan domain apex `k37.com` ke IP `10.82.5.2` milik Penny:
 
 ```bash
-root@prab:~# cat > /var/cache/bind/db.k37.com <<'EOF'
+cat <<EOF > /var/cache/bind/db.k37.com
 $TTL 300
 
 @   IN  SOA     prab.k37.com. admin.k37.com. (
@@ -279,102 +280,64 @@ EOF
 ```
 <img src="Assets/soal4_konfigurasi k37.png" width="500" height="300">
 
-selanjutnya kita validasi dengan `named-checkzone k37.com /var/cache/bind/db.k37.com`
-
-1. test DNS master
-masi diterminal prab jalankan perintah ini
-`dig @127.0.0.1 k37.com` `dig @127.0.0.1 prab.k37.com` dan `dig @127.0.0.1 tedd.k37.com`
-
+Validasi dan reload layanan BIND pada Prab:
 ```bash
-root@prab:~# dig @127.0.0.1 k37.com
-
-; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 k37.com
-; (1 server found)
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 62678
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: d05a46d26150177e010000006abb6334a3afce407f0c56ff (good)
-;; QUESTION SECTION:
-;k37.com.                       IN      A
-
-;; ANSWER SECTION:
-k37.com.                300     IN      A       10.82.5.2
-
-;; Query time: 1 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Tue Sep 29 07:05:24 UTC 2026
-;; MSG SIZE  rcvd: 80
-
-root@prab:~# dig @127.0.0.1 prab.k37.com
-
-; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 prab.k37.com
-; (1 server found)
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5990
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: c3e917c838601e78010000006abb634695cbefc2c5973032 (good)
-;; QUESTION SECTION:
-;prab.k37.com.                  IN      A
-
-;; ANSWER SECTION:
-prab.k37.com.           300     IN      A       10.82.1.2
-
-;; Query time: 1 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Tue Sep 29 07:05:42 UTC 2026
-;; MSG SIZE  rcvd: 85
-
-root@prab:~# dig @127.0.0.1 tedd.k37.com
-
-; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 tedd.k37.com
-; (1 server found)
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 61119
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 8a04fc45b5093b64010000006abb63512075f805bb27e894 (good)
-;; QUESTION SECTION:
-;tedd.k37.com.                  IN      A
-
-;; ANSWER SECTION:
-tedd.k37.com.           300     IN      A       10.82.1.3
-
-;; Query time: 1 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Tue Sep 29 07:05:53 UTC 2026
-;; MSG SIZE  rcvd: 85
-
+named-checkconf
+named-checkzone k37.com /var/cache/bind/db.k37.com
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || named -c /etc/bind/named.conf
 ```
 
-dari hasil diatas kita menemukan bahwa DNS Master prab sudah bekerja
-
+### Pengujian DNS Master pada Prab
+Jalankan perintah pengujian berikut di node `prab`:
 ```bash
+dig @127.0.0.1 k37.com
+dig @127.0.0.1 prab.k37.com
+dig @127.0.0.1 tedd.k37.com
+```
+
+Contoh output yang diperoleh:
+```text
+;k37.com.                       IN      A
+k37.com.                300     IN      A       10.82.5.2
+
+;prab.k37.com.                  IN      A
+prab.k37.com.           300     IN      A       10.82.1.2
+
+;tedd.k37.com.                  IN      A
+tedd.k37.com.           300     IN      A       10.82.1.3
+```
+
+Dari hasil di atas membuktikan bahwa DNS Master Prab sudah bekerja dan me-resolve record autoritatif:
+```text
 k37.com.        A    10.82.5.2
 prab.k37.com.   A    10.82.1.2
 tedd.k37.com.   A    10.82.1.3
 ```
 
-### Konfigurasi DNS Slave — tedd
+### Konfigurasi DNS Slave — Tedd
 
-kami menjadikan `tedd`
-sebagai server DNS Slave untuk zone `k37.com`. Server `tedd` mengambil
-data zone dari DNS Master `prab` melalui proses zone transfer dengan
-Master pada IP `10.82.1.2`.
+Node `tedd` bertindak sebagai server DNS Slave untuk zone `k37.com`. Server `tedd` menarik data zone dari DNS Master `prab` (`10.82.1.2`) melalui proses *zone transfer*.
 
-1. buat konfigurasi
+1. Konfigurasi `named.conf.options` pada `tedd`:
 ```bash
-root@tedd:~# cat > /etc/bind/named.conf.local <<'EOF'
+cat <<EOF > /etc/bind/named.conf.options
+options {
+  directory "/var/cache/bind";
+
+  forwarders {
+    192.168.122.1;
+  };
+
+  allow-query { any; };
+  allow-recursion { any; };
+  recursion yes;
+};
+EOF
+```
+
+2. Konfigurasi `named.conf.local` pada `tedd`:
+```bash
+cat <<EOF > /etc/bind/named.conf.local
 zone "k37.com" {
   type slave;
 
@@ -388,61 +351,26 @@ EOF
 ```
 <img src="Assets/soal4_konfigurasited.png" width="500" height="300">
 
-2. selanjtnya kita menjalankan tes dns pada ted
+3. Validasi dan jalankan service BIND pada Tedd:
 ```bash
-named -c /etc/bind/named.conf
-ls -l /var/cache/bind/db.k37.com
-// tes zone ted
-dig @127.0.0.1 k37.com dan dig @127.0.0.1 prab.k37.com
+named-checkconf
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || named -c /etc/bind/named.conf
+ls -l /var/cache/bind/
 ```
+
+4. Pengujian resolusi DNS pada Tedd:
 ```bash
-root@tedd:~# dig @127.0.0.1 k37.com
+dig @127.0.0.1 k37.com
+dig @127.0.0.1 prab.k37.com
+```
 
-; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 k37.com
-; (1 server found)
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 62170
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: bfdc114dfca70cb1010000006abb670047604882e5d65496 (good)
-;; QUESTION SECTION:
+Contoh output yang diperoleh:
+```text
 ;k37.com.                       IN      A
-
-;; ANSWER SECTION:
 k37.com.                300     IN      A       10.82.5.2
 
-;; Query time: 2 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Tue Sep 29 07:21:36 UTC 2026
-;; MSG SIZE  rcvd: 80
-
-root@tedd:~# dig @127.0.0.1 prab.k37.com
-
-; <<>> DiG 9.20.29-1~deb13u1-Debian <<>> @127.0.0.1 prab.k37.com
-; (1 server found)
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 24614
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: fe422b7c6846c719010000006abb670a5a9f84cf40e6d285 (good)
-;; QUESTION SECTION:
 ;prab.k37.com.                  IN      A
-
-;; ANSWER SECTION:
 prab.k37.com.           300     IN      A       10.82.1.2
-
-;; Query time: 1 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Tue Sep 29 07:21:46 UTC 2026
-;; MSG SIZE  rcvd: 85
-
-root@tedd:~#
 ```
 <img src="Assets/soal4_tes dns pada ted.png" width="700" height="1000">
 
@@ -539,10 +467,13 @@ sehingga diperoleh IP dari masing masing host
 |  13 | abbey   | `10.82.4.2` |
 |  14 | penny   | `10.82.5.2` |
 
-### Konfigurasi Domain pada DNS Master
+Script konfigurasi disimpan di [`scripts/soal5.sh`](scripts/soal5.sh).
 
- ```bash
-root@prab:~# cat > /var/cache/bind/db.k37.com <<'EOF'
+### Konfigurasi Domain pada DNS Master (Prab)
+
+Jalankan perintah berikut pada node `prab` untuk memperbarui `/var/cache/bind/db.k37.com`:
+```bash
+cat > /var/cache/bind/db.k37.com <<'EOF'
 $TTL 300
 
 @   IN  SOA     prab.k37.com. admin.k37.com. (
@@ -566,6 +497,15 @@ gamma       IN  A   10.82.2.4
 delta       IN  A   10.82.3.2
 epsilon     IN  A   10.82.3.3
 abbey       IN  A   10.82.4.2
+penny       IN  A   10.82.5.2
+obladi      IN  A   10.82.1.4
+desmond     IN  A   10.82.1.5
+oblada      IN  A   10.82.1.6
+molly       IN  A   10.82.1.7
+EOF
+
+named-checkzone k37.com /var/cache/bind/db.k37.com
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 ```
 <img src="Assets/soal5_konfigurasi master.png" >
 
@@ -596,23 +536,19 @@ Pastikan zone transfer berjalan, pastikan tedd telah menerima salinan zona terba
 
 Tujuannya adalah memastikan bahwa zone k37.com yang terdapat pada DNS Master dapat ditransfer ke DNS Slave dan memiliki data zone yang sama. Salah satu indikator yang digunakan adalah nilai serial pada SOA, karena serial digunakan untuk menunjukkan versi dari zone yang sedang digunakan. Ketentuan praktikum juga meminta agar zone pada prab dan tedd memiliki serial yang sama setelah proses transfer.
 
-### Mengecek Serial Zone pada prab
-Untuk membuktikan bahwa tedd (DNS Slave) telah menerima salinan zone terbaru dari prab (DNS Master), kami membandingkan nomor seri SOA dari kedua server secara langsung.
+Script pengujian disimpan di [`scripts/soal6.sh`](scripts/soal6.sh).
 
+### Pengecekan Serial SOA Prab vs Tedd
+Untuk membuktikan bahwa `tedd` (DNS Slave) telah menerima salinan zone terbaru dari `prab` (DNS Master), bandingkan nilai SOA dari kedua server secara langsung:
 
-Prab (DNS Master) dan Tedd (DNS Slave)
 ```bash
 dig @10.82.1.2 k37.com SOA +short
 dig @10.82.1.3 k37.com SOA +short
 ```
-Kedua perintah tersebut dapat dijalankan dari client yang sama, misalnya prab, sehingga pengujian dilakukan dengan kondisi client yang sama dan hanya server DNS tujuan yang berbeda.
 
-```bash
-root@prab:~# dig @127.0.0.1 k37.com SOA +short
+Hasil yang diperoleh (menunjukkan serial SOA identik di kedua server):
+```text
 prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
-root@prab:~# dig @10.82.1.2 k37.com SOA +short
-prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
-root@prab:~# dig @10.82.1.3 k37.com SOA +short
 prab.k37.com. admin.k37.com. 2026092902 3600 600 86400 300
 ```
 ![alt text](Assets/soal6.png)
@@ -631,11 +567,13 @@ Verifikasi dari dua klien berbeda bahwa seluruh hostname tersebut ter-resolve ke
 
 
 
-Pada soal ini, kami membuat beberapa record DNS tambahan untuk menyediakan nama yang lebih mudah digunakan dalam mengakses layanan yang tersedia pada jaringan. Konfigurasi yang dibuat terdiri dari A Record untuk vault dan core, serta CNAME Record untuk menyediakan alias www dan static. Sesuai ketentuan soal, vault diarahkan ke server obladi dan desmond, sedangkan core diarahkan ke oblada dan molly. Selain itu, www dibuat sebagai alias dari penny, dan static dibuat sebagai alias dari abbey.
+Pada soal ini, kami membuat beberapa record DNS tambahan untuk menyediakan nama yang lebih mudah digunakan dalam mengakses layanan yang tersedia pada jaringan. Konfigurasi yang dibuat terdiri dari A Record untuk `vault` dan `core`, serta CNAME Record untuk menyediakan alias `www` dan `static`. Sesuai ketentuan soal, `vault` diarahkan ke server `obladi` dan `desmond`, sedangkan `core` diarahkan ke `oblada` dan `molly`. Selain itu, `www` dibuat sebagai alias dari `penny`, dan `static` dibuat sebagai alias dari `abbey`.
+
+Script konfigurasi disimpan di [`scripts/soal7.sh`](scripts/soal7.sh).
 
 ### Konfigurasi di Prab (Master)
 
-Semua perubahan konfigurasi DNS dilakukan pada server master, yaitu prab. Kami menambahkan record berikut ke dalam file zone:
+Semua perubahan konfigurasi DNS dilakukan pada server master, yaitu `prab`. Tambahkan record berikut ke dalam zone file `/var/cache/bind/db.k37.com`:
 
 ```bash
 cat <<EOF >> /var/cache/bind/db.k37.com
@@ -651,18 +589,17 @@ static      IN  CNAME   abbey.k37.com.
 
 EOF
 ```
-Konfigurasi tersebut membuat vault.k37.com memiliki dua alamat IP, yaitu 10.82.1.4 dan 10.82.1.5, yang masing-masing merupakan alamat IP dari obladi dan desmond. Sementara itu, core.k37.com memiliki dua alamat IP, yaitu 10.82.1.6 dan 10.82.1.7, yang merupakan alamat IP dari oblada dan molly.
+Konfigurasi tersebut membuat `vault.k37.com` memiliki dua alamat IP, yaitu `10.82.1.4` dan `10.82.1.5` (`obladi` dan `desmond`). Sementara itu, `core.k37.com` memiliki dua alamat IP, yaitu `10.82.1.6` dan `10.82.1.7` (`oblada` dan `molly`).
 
-Setelah melakukan perubahan pada zone file, nomor serial SOA dinaikkan dari:
-
-`2026092902` menjadi: `2026092903`
-
-Perubahan serial dilakukan menggunakan perintah:
+Setelah melakukan perubahan pada zone file, nomor serial SOA dinaikkan secara dinamis, divalidasi, dan service BIND di-reload:
 ```bash
-sed -i 's/2026092902/2026092903/' /var/cache/bind/db.k37.com
+SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
+[ -n "$SERIAL_OLD" ] && sed -i "s/$SERIAL_OLD/$((SERIAL_OLD + 1))/" /var/cache/bind/db.k37.com
+
+named-checkzone k37.com /var/cache/bind/db.k37.com
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || named -c /etc/bind/named.conf
 ```
-Penaikan serial dilakukan untuk menandai bahwa terdapat perubahan pada zone k37.com, sehingga versi zone terbaru dapat dikenali oleh DNS Slave pada proses sinkronisasi.
- ![alt text](Assets/soal7_1.png)
+![alt text](Assets/soal7_1.png)
 
  selanjutnya
 ## Verifikasi dari Client
@@ -691,7 +628,9 @@ Hasil tersebut menunjukkan bahwa vault.k37.com berhasil di-resolve ke dua alamat
 
 ---
  
- Di prab (ns1) deklarasikan reverse zone untuk segmen jaringan  tempat abbey, penny, area vault, dan area core berada. Di tedd (ns2) tarik reverse zone tersebut sebagai slave, isi PTR untuk keempat hostname itu agar pencarian balik IP address mengembalikan hostname yang benar, lalu pastikan query reverse untuk alamat abbey, penny, area vault, dan area core dijawab authoritative.
+ Di prab (ns1) deklarasikan reverse zone untuk segmen jaringan tempat abbey, penny, area vault, dan area core berada. Di tedd (ns2) tarik reverse zone tersebut sebagai slave, isi PTR untuk keempat hostname itu agar pencarian balik IP address mengembalikan hostname yang benar, lalu pastikan query reverse untuk alamat abbey, penny, area vault, dan area core dijawab authoritative.
+
+Script konfigurasi disimpan di [`scripts/soal8.sh`](scripts/soal8.sh).
 
 ### Konfigurasi di Prab (Master)
 
@@ -795,9 +734,18 @@ $TTL 300
 2 IN PTR penny.k37.com.
 EOF
 ```
-```bash
-Setelah konfigurasi Master selesai, kami melakukan pengujian menggunakan dig dengan DNS server Prab pada alamat 10.82.1.2.
 
+Validasi konfigurasi dan reload BIND pada Prab:
+```bash
+named-checkconf
+named-checkzone 1.82.10.in-addr.arpa /var/cache/bind/db.10.82.1
+named-checkzone 4.82.10.in-addr.arpa /var/cache/bind/db.10.82.4
+named-checkzone 5.82.10.in-addr.arpa /var/cache/bind/db.10.82.5
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || named -c /etc/bind/named.conf
+```
+
+Setelah konfigurasi Master selesai, lakukan pengujian menggunakan `dig` terhadap DNS server Prab (`10.82.1.2`):
+```bash
 dig @10.82.1.2 -x 10.82.1.4 +short
 dig @10.82.1.2 -x 10.82.1.5 +short
 dig @10.82.1.2 -x 10.82.1.6 +short
@@ -806,7 +754,7 @@ dig @10.82.1.2 -x 10.82.4.2 +short
 dig @10.82.1.2 -x 10.82.5.2 +short
 ```
 Hasil yang diperoleh:
-```bash
+```text
 obladi.k37.com.
 desmond.k37.com.
 oblada.k37.com.
@@ -818,10 +766,10 @@ Hasil tersebut menunjukkan bahwa Prab berhasil mengembalikan hostname berdasarka
 
 ### Konfigurasi di Tedd (Slave)
 
-Selanjutnya, kami mengonfigurasi Tedd sebagai DNS Slave. Tedd mengambil reverse zone dari Prab sebagai Master melalui alamat 10.82.1.2.
+Selanjutnya, kami mengonfigurasi Tedd sebagai DNS Slave. Tedd mengambil reverse zone dari Prab sebagai Master melalui alamat `10.82.1.2`.
 
-Konfigurasi pada /etc/bind/named.conf.local di Tedd adalah:
-``` bash
+Konfigurasi pada `/etc/bind/named.conf.local` di Tedd adalah:
+```bash
 cat > /etc/bind/named.conf.local <<'EOF'
 zone "k37.com" {
     type slave;
@@ -847,6 +795,13 @@ zone "5.82.10.in-addr.arpa" {
     file "/var/cache/bind/db.10.82.5";
 };
 EOF
+```
+
+Validasi dan restart BIND pada Tedd agar Slave segera melakukan sinkronisasi transfer zone dari Prab:
+```bash
+named-checkconf
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || named -c /etc/bind/named.conf
+sleep 3
 ```
 ![Assets/soal8_2.png](Assets/soal8_2.png)
 
@@ -1278,41 +1233,39 @@ Berdasarkan hasil pengujian ApacheBench:
 Tambahkan TXT record pada DNS untuk semua klien sayap kiri dan sayap kanan (Alpha, Beta, Gamma, Delta, Epsilon). Jika DNS di-query TXT terhadap nama domain mereka (contoh: alpha.<xxxx>.com), sistem harus mengembalikan teks berupa nama hostname mereka masing-masing (contoh: "alpha").
 
 
-1. Konfigurasi pada Prab (Master)
+Script konfigurasi dan pengujian disimpan di [`scripts/soal17.sh`](scripts/soal17.sh).
 
-Penambahan TXT record dilakukan pada file zone DNS:
+### 1. Konfigurasi pada Prab (Master DNS)
 
-/var/cache/bind/db.k37.com
-
-Record TXT yang ditambahkan adalah:
+Tambahkan TXT record ke dalam file zone DNS `/var/cache/bind/db.k37.com`:
 ```bash
+cat >> /var/cache/bind/db.k37.com <<'EOF'
+
+; TXT record - Soal No. 17
 alpha       IN TXT "alpha"
 beta        IN TXT "beta"
 gamma       IN TXT "gamma"
 delta       IN TXT "delta"
 epsilon     IN TXT "epsilon"
+EOF
 ```
-Sehingga setiap hostname memiliki TXT record sesuai dengan nama hostnya.
 
-Selanjutnya, nilai serial SOA pada Prab dinaikkan dari:
-
-`2026092903` menjadi: `2026092904`
-
-Kenaikan serial dilakukan agar perubahan pada zone dapat dikenali sebagai versi terbaru oleh DNS Slave.
-
-2. Validasi Zone
-
-Setelah TXT record ditambahkan dan serial SOA diperbarui, dilakukan pengecekan menggunakan named-checkzone:
-
-`named-checkzone k37.com /var/cache/bind/db.k37.com`
-
-Hasil yang diperoleh:
+Naikkan serial SOA secara dinamis, validasi zone file, dan reload service BIND pada Prab:
 ```bash
+SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
+[ -n "$SERIAL_OLD" ] && sed -i "s/$SERIAL_OLD/$((SERIAL_OLD + 1))/" /var/cache/bind/db.k37.com
+
+named-checkzone k37.com /var/cache/bind/db.k37.com
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
+```
+
+Hasil validasi zone file:
+```text
 zone k37.com/IN: loaded serial 2026092904
 OK
 ```
 ![alt text](Assets/17-.png)
-Hasil tersebut menunjukkan bahwa konfigurasi zone k37.com berhasil dimuat dengan serial 2026092904 dan tidak terdapat kesalahan sintaks pada zone file.
+Hasil tersebut menunjukkan bahwa konfigurasi zone `k37.com` berhasil dimuat tanpa kesalahan sintaks.
 
 3. Verifikasi TXT Record
 
@@ -1445,8 +1398,9 @@ Script konfigurasi dan pengujian disimpan di [`scripts/soal19.sh`](scripts/soal1
 
 ### 1. Konfigurasi DNS Options (Forwarders & Rekursi)
 
-Agar server DNS BIND dapat menyelesaikan nama domain eksternal (`http.badssl.com`) yang direferensikan oleh CNAME, opsi `recursion` dan `forwarders` harus diaktifkan pada file `/etc/bind/named.conf.options`:
-```text
+Agar server DNS BIND dapat menyelesaikan nama domain eksternal (`http.badssl.com`) yang direferensikan oleh CNAME, opsi `recursion`, `forwarders`, serta `allow-query` harus aktif pada file `/etc/bind/named.conf.options`:
+```bash
+cat <<EOF > /etc/bind/named.conf.options
 options {
     directory "/var/cache/bind";
 
@@ -1454,8 +1408,11 @@ options {
         192.168.122.1;
     };
 
+    allow-query { any; };
+    allow-recursion { any; };
     recursion yes;
 };
+EOF
 ```
 Konfigurasi ini memungkinkan Prab meneruskan (*forward*) pencarian rekursif untuk domain publik di luar zone lokal ke gateway/upstream DNS.
 
@@ -1464,17 +1421,21 @@ Konfigurasi ini memungkinkan Prab meneruskan (*forward*) pencarian rekursif untu
 ### 2. Penambahan CNAME Record pada Prab (Master DNS)
 
 Pada file zone `/var/cache/bind/db.k37.com`, ditambahkan record CNAME yang memetakan subdomain internal `outbound` ke domain publik eksternal `http.badssl.com.`:
-```text
-outbound    IN    CNAME    http.badssl.com.
-```
-*(Catatan: tanda titik di akhir `http.badssl.com.` adalah FQDN absolut agar BIND tidak menambahkan suffix `.k37.com` di belakangnya).*
-
-Setelah itu, konfigurasi divalidasi dan service BIND di-restart:
 ```bash
+cat >> /var/cache/bind/db.k37.com <<'EOF'
+outbound    IN    CNAME    http.badssl.com.
+EOF
+
+# Naikkan serial SOA secara dinamis
+SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
+[ -n "$SERIAL_OLD" ] && sed -i "s/$SERIAL_OLD/$((SERIAL_OLD + 1))/" /var/cache/bind/db.k37.com
+
+# Validasi konfigurasi zone
 named-checkconf /etc/bind/named.conf
 named-checkzone k37.com /var/cache/bind/db.k37.com
-pkill named
-named -c /etc/bind/named.conf
+
+# Reload service BIND
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 ```
 
 ---
@@ -1546,9 +1507,13 @@ Script konfigurasi disimpan di [`scripts/soal20.sh`](scripts/soal20.sh).
 ### 1. Pengembalian Koordinat Normal pada DNS Master (Prab)
 Pada node **prab**, record IP milik `abbey` dikembalikan ke IP aslinya (`10.82.4.2`), nilai serial SOA dinaikkan, dan service BIND9 di-reload:
 ```bash
-sed -i 's/10.82.4.50/10.82.4.2/' /var/cache/bind/db.k37.com
-pkill named
-named -c /etc/bind/named.conf
+sed -i 's/^abbey.*/abbey       IN  A   10.82.4.2/' /var/cache/bind/db.k37.com
+
+SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
+[ -n "$SERIAL_OLD" ] && sed -i "s/$SERIAL_OLD/$((SERIAL_OLD + 1))/" /var/cache/bind/db.k37.com
+
+named-checkzone k37.com /var/cache/bind/db.k37.com
+service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 ```
 
 ![Bukti Pengembalian IP Normal Abbey pada Prab](Assets/20-prab-restore.png)
@@ -1564,7 +1529,7 @@ Perintah inisialisasi dimasukkan ke file `/root/.bashrc` pada masing-masing node
    ```
 2. **Prab & Tedd (DNS Master & Slave):**
    ```bash
-   echo "named -c /etc/bind/named.conf" >> /root/.bashrc
+   echo "service bind9 start 2>/dev/null || service named start 2>/dev/null || named -c /etc/bind/named.conf" >> /root/.bashrc
    ```
 3. **Penny (Reverse Proxy Apache & PHP-FPM):**
    ```bash
