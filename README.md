@@ -993,14 +993,6 @@ done
 ```
 Respons bergantian dijawab oleh `oblada` dan `molly`, serta header `Host` tercatat `abbey.k37.com` dan `Client IP` mencatat IP asli client (`10.82.2.4`).
 
-> **Catatan Troubleshooting Saat Demo:**
-> - Jika muncul error `Could not resolve host: penny.k37.com` atau `Temporary failure in name resolution`:
->   1. Jalankan `named -c /etc/bind/named.conf` di **prab** untuk memastikan daemon DNS BIND9 aktif.
->   2. Jalankan `sysctl -w net.ipv4.ip_forward=1` di **rootkit** untuk memastikan router meneruskan paket antar-subnet.
->   3. Atau tambahkan mapping IP ke `/etc/hosts` di client seperti pada langkah persiapan di atas.
-> - Jika pengujian `curl` ke Penny menghasilkan `403 Forbidden`, pastikan file `/var/www/vault/index.html` sudah ada di `obladi` dan `desmond`.
-> - Jika pengujian `curl` ke Abbey kosong atau menghasilkan `502 Bad Gateway`, pastikan service Nginx dan PHP-FPM aktif di **oblada** dan **molly** (`service nginx restart && service php8.4-fpm restart 2>/dev/null || service php-fpm restart`).
-
 ![Bukti Reverse Proxy Penny dan Abbey](Assets/11-reverse-proxy.png)
 *(Tangkapan layar hasil pengujian distribusi lalu lintas dan header forwarding dari client)*
 
