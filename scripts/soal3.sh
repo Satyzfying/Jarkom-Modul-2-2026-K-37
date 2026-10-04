@@ -1,8 +1,5 @@
 #!/bin/bash
-# ==============================================================================
-# NOMOR 3: DNS Resolver 192.168.122.1 pada Seluruh Host Non-Router
-# (Routing internal antar-divisi telah ditangani oleh default gateway via rootkit)
-# ==============================================================================
+
 
 # ==== PRAB ====
 echo "nameserver 192.168.122.1" > /etc/resolv.conf

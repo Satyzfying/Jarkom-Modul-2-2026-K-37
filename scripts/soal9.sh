@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ==== OBLADI ====
-# Bypass valid-until untuk Debian Security repo jika simulasi tahun 2026
 echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+sed -i '/security/s/^/#/' /etc/apt/sources.list 2>/dev/null || true
 
 apt-get update
 apt-get install -y apache2
@@ -44,8 +44,8 @@ service apache2 restart
 
 
 # ==== DESMOND ====
-# Bypass valid-until untuk Debian Security repo jika simulasi tahun 2026
 echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
+sed -i '/security/s/^/#/' /etc/apt/sources.list 2>/dev/null || true
 
 apt-get update
 apt-get install -y apache2

@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# PRASYARAT (Jalankan sekali di backend sebelum pengujian):
-# Di obladi  : echo "<h1>Area Vault - Server Obladi</h1>" > /var/www/vault/index.html
-# Di desmond : echo "<h1>Area Vault - Server Desmond</h1>" > /var/www/vault/index.html
-# Di rootkit : sysctl -w net.ipv4.ip_forward=1 && iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 # ==== PENNY ====
 echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99insecure 2>/dev/null || true
@@ -70,13 +66,4 @@ rm -f /etc/nginx/sites-enabled/default
 nginx -t && service nginx restart
 
 
-# ==== PENGUJIAN DARI CLIENT (misal: gamma) ====
-# 1. Pastikan domain ter-resolve (atau fallback hosts):
-#    echo "10.82.5.2 penny.k37.com www.k37.com" >> /etc/hosts
-#    echo "10.82.4.2 abbey.k37.com static.k37.com" >> /etc/hosts
-#
-# 2. Uji Load Balancing Penny (Vault):
-#    for i in {1..4}; do curl -s http://penny.k37.com/ | grep -i "Server"; done
-#
-# 3. Uji Load Balancing Abbey (Core):
-#    for i in {1..4}; do echo "--- Request \$i ---"; curl -s http://abbey.k37.com/profil | grep -E "Node Server|Host Header|Client IP"; done
+

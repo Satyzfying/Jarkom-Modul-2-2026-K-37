@@ -69,13 +69,4 @@ EOF
 
 service apache2 restart
 
-# ==== PENGUJIAN DARI CLIENT (misal: gamma) ====
-# 1. Tanpa kredensial (HTTP 401 Unauthorized):
-#    curl -i http://penny.k37.com/admin/
-#
-# 2. Password salah (HTTP 401 Unauthorized):
-#    curl -i -u "prabs:passwordsalah" http://penny.k37.com/admin/
-#
-# 3. Kredensial benar (HTTP 200 OK):
-#    curl -i -u "prabs:pakar_pinter_jadi_gob***" http://penny.k37.com/admin/
 

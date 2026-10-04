@@ -1,9 +1,5 @@
-# ==== SOAL 18 ====
 # ==== PRAB (MASTER DNS) ====
-# 1. Update zone file /var/cache/bind/db.k37.com:
-#    - Naikkan serial SOA (misal: 2026092909)
-#    - Ubah A record abbey menjadi IP fiktif (10.82.4.50) dengan TTL 15 detik:
-#      abbey    15    IN    A    10.82.4.50
+
 
 # Naikkan serial SOA
 SERIAL_OLD=$(grep -oE '[0-9]{10}' /var/cache/bind/db.k37.com | head -1)
@@ -16,8 +12,7 @@ named-checkzone k37.com /var/cache/bind/db.k37.com
 # Reload BIND pada Prab
 service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 
-# ==== TEDD (SLAVE DNS) ====
-# Verifikasi sinkronisasi zone transfer ke Tedd
+# ==== TEDD ====
 dig @10.82.1.3 abbey.k37.com A +noall +answer
 dig @10.82.1.3 k37.com SOA +noall +answer
 

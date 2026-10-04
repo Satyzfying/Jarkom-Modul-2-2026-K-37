@@ -209,7 +209,7 @@ Script konfigurasi disimpan di [`scripts/soal4.sh`](scripts/soal4.sh).
 Instalasi paket BIND9 pada `prab`:
 ```bash
 apt update
-apt install bind9 bind9-utils bind9-dnsutils -y
+apt install bind9 bind9-utils bind9-dnsutils curl -y
 ```
 
 1. Konfigurasi `named.conf.options`
@@ -1195,7 +1195,7 @@ Script disimpan di [`scripts/soal16.sh`](scripts/soal16.sh).
 2. Install `apache2-utils` jika belum ada:
    ```bash
    apt-get update
-   apt-get install -y apache2-utils
+   apt-get install -y apache2-utils curl
    ```
 3. Jalankan pengujian benchmark:
    ```bash
