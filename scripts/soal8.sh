@@ -1,157 +1,137 @@
- # KONFIGURASI UMUM
- BIND_DIR="/etc/bind"
-CACHE_DIR="/var/cache/bind"
-DOMAIN="k37.com"
-PRAB_IP="10.82.1.2"
-TEDD_IP="10.82.1.3"
-
-stop_named() {
-    service bind9 stop 2>/dev/null || service named stop 2>/dev/null || pkill named 2>/dev/null || true
-}
-
-start_named() {
-    service bind9 start 2>/dev/null || service named start 2>/dev/null || named -c /etc/bind/named.conf
-}
+#!/bin/bash
 
 # ==== PRAB (MASTER DNS) ====
 if [ "$(hostname)" = "prab" ]; then
-    cat > "$BIND_DIR/named.conf.local" <<EOF
-zone "$DOMAIN" {
+    cat > /etc/bind/named.conf.local <<EOF
+zone "k37.com" {
     type master;
-    file "$CACHE_DIR/db.$DOMAIN";
+    file "/var/cache/bind/db.k37.com";
     notify yes;
-    allow-transfer { $TEDD_IP; };
+    allow-transfer { 10.82.1.3; };
 };
 
 zone "1.82.10.in-addr.arpa" {
     type master;
-    file "$CACHE_DIR/db.10.82.1";
+    file "/var/cache/bind/db.10.82.1";
     notify yes;
-    allow-transfer { $TEDD_IP; };
+    allow-transfer { 10.82.1.3; };
 };
 
 zone "4.82.10.in-addr.arpa" {
     type master;
-    file "$CACHE_DIR/db.10.82.4";
+    file "/var/cache/bind/db.10.82.4";
     notify yes;
-    allow-transfer { $TEDD_IP; };
+    allow-transfer { 10.82.1.3; };
 };
 
 zone "5.82.10.in-addr.arpa" {
     type master;
-    file "$CACHE_DIR/db.10.82.5";
+    file "/var/cache/bind/db.10.82.5";
     notify yes;
-    allow-transfer { $TEDD_IP; };
+    allow-transfer { 10.82.1.3; };
 };
 EOF
 
-    cat > "$CACHE_DIR/db.10.82.1" <<EOF
+    cat > /var/cache/bind/db.10.82.1 <<EOF
 \$TTL 300
-@ IN SOA prab.$DOMAIN. admin.$DOMAIN. (
+@ IN SOA prab.k37.com. admin.k37.com. (
     2026092901
     3600
     600
     86400
     300
 )
-@ IN NS prab.$DOMAIN.
-@ IN NS tedd.$DOMAIN.
+@ IN NS prab.k37.com.
+@ IN NS tedd.k37.com.
 
-4 IN PTR obladi.$DOMAIN.
-5 IN PTR desmond.$DOMAIN.
-6 IN PTR oblada.$DOMAIN.
-7 IN PTR molly.$DOMAIN.
+4 IN PTR obladi.k37.com.
+5 IN PTR desmond.k37.com.
+6 IN PTR oblada.k37.com.
+7 IN PTR molly.k37.com.
 EOF
 
-    cat > "$CACHE_DIR/db.10.82.4" <<EOF
+    cat > /var/cache/bind/db.10.82.4 <<EOF
 \$TTL 300
-@ IN SOA prab.$DOMAIN. admin.$DOMAIN. (
+@ IN SOA prab.k37.com. admin.k37.com. (
     2026092901
     3600
     600
     86400
     300
 )
-@ IN NS prab.$DOMAIN.
-@ IN NS tedd.$DOMAIN.
+@ IN NS prab.k37.com.
+@ IN NS tedd.k37.com.
 
-2 IN PTR abbey.$DOMAIN.
+2 IN PTR abbey.k37.com.
 EOF
 
-    cat > "$CACHE_DIR/db.10.82.5" <<EOF
+    cat > /var/cache/bind/db.10.82.5 <<EOF
 \$TTL 300
-@ IN SOA prab.$DOMAIN. admin.$DOMAIN. (
+@ IN SOA prab.k37.com. admin.k37.com. (
     2026092901
     3600
     600
     86400
     300
 )
-@ IN NS prab.$DOMAIN.
-@ IN NS tedd.$DOMAIN.
+@ IN NS prab.k37.com.
+@ IN NS tedd.k37.com.
 
-2 IN PTR penny.$DOMAIN.
+2 IN PTR penny.k37.com.
 EOF
 
     named-checkconf
-    named-checkzone 1.82.10.in-addr.arpa "$CACHE_DIR/db.10.82.1"
-    named-checkzone 4.82.10.in-addr.arpa "$CACHE_DIR/db.10.82.4"
-    named-checkzone 5.82.10.in-addr.arpa "$CACHE_DIR/db.10.82.5"
+    named-checkzone 1.82.10.in-addr.arpa /var/cache/bind/db.10.82.1
+    named-checkzone 4.82.10.in-addr.arpa /var/cache/bind/db.10.82.4
+    named-checkzone 5.82.10.in-addr.arpa /var/cache/bind/db.10.82.5
 
-    stop_named
-    start_named
+    service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 
-    dig @"$PRAB_IP" -x 10.82.1.4 +short
-    dig @"$PRAB_IP" -x 10.82.1.5 +short
-    dig @"$PRAB_IP" -x 10.82.1.6 +short
-    dig @"$PRAB_IP" -x 10.82.1.7 +short
-    dig @"$PRAB_IP" -x 10.82.4.2 +short
-    dig @"$PRAB_IP" -x 10.82.5.2 +short
+    dig @10.82.1.2 -x 10.82.1.4 +short
+    dig @10.82.1.2 -x 10.82.1.5 +short
+    dig @10.82.1.2 -x 10.82.1.6 +short
+    dig @10.82.1.2 -x 10.82.1.7 +short
+    dig @10.82.1.2 -x 10.82.4.2 +short
+    dig @10.82.1.2 -x 10.82.5.2 +short
 
 # ==== TEDD (SLAVE DNS) ====
 elif [ "$(hostname)" = "tedd" ]; then
-
-    cat > "$BIND_DIR/named.conf.local" <<EOF
-zone "$DOMAIN" {
+    cat > /etc/bind/named.conf.local <<EOF
+zone "k37.com" {
     type slave;
-    masters { $PRAB_IP; };
-    file "$CACHE_DIR/db.$DOMAIN";
+    masters { 10.82.1.2; };
+    file "/var/cache/bind/db.k37.com";
 };
 
 zone "1.82.10.in-addr.arpa" {
     type slave;
-    masters { $PRAB_IP; };
-    file "$CACHE_DIR/db.10.82.1";
+    masters { 10.82.1.2; };
+    file "/var/cache/bind/db.10.82.1";
 };
 
 zone "4.82.10.in-addr.arpa" {
     type slave;
-    masters { $PRAB_IP; };
-    file "$CACHE_DIR/db.10.82.4";
+    masters { 10.82.1.2; };
+    file "/var/cache/bind/db.10.82.4";
 };
 
 zone "5.82.10.in-addr.arpa" {
     type slave;
-    masters { $PRAB_IP; };
-    file "$CACHE_DIR/db.10.82.5";
+    masters { 10.82.1.2; };
+    file "/var/cache/bind/db.10.82.5";
 };
 EOF
 
     named-checkconf
 
-    stop_named
-    start_named
+    service bind9 restart 2>/dev/null || service named restart 2>/dev/null || { pkill named; named -c /etc/bind/named.conf; }
 
-    sleep 5
+    sleep 3
 
-    ls -l "$CACHE_DIR"/db.10.82.1 \
-          "$CACHE_DIR"/db.10.82.4 \
-          "$CACHE_DIR"/db.10.82.5
-
-    dig @"$TEDD_IP" -x 10.82.1.4 +short
-    dig @"$TEDD_IP" -x 10.82.1.5 +short
-    dig @"$TEDD_IP" -x 10.82.1.6 +short
-    dig @"$TEDD_IP" -x 10.82.1.7 +short
-    dig @"$TEDD_IP" -x 10.82.4.2 +short
-    dig @"$TEDD_IP" -x 10.82.5.2 +short
+    dig @10.82.1.3 -x 10.82.1.4 +short
+    dig @10.82.1.3 -x 10.82.1.5 +short
+    dig @10.82.1.3 -x 10.82.1.6 +short
+    dig @10.82.1.3 -x 10.82.1.7 +short
+    dig @10.82.1.3 -x 10.82.4.2 +short
+    dig @10.82.1.3 -x 10.82.5.2 +short
 fi

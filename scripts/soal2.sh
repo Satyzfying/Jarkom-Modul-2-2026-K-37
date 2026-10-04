@@ -2,7 +2,7 @@
 
 
 # ==== ROOTKIT ====
-udhcpc -i eth0
+dhclient eth0
 
 sysctl -w net.ipv4.ip_forward=1
 

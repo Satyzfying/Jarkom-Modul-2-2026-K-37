@@ -131,7 +131,7 @@ Script konfigurasinya disimpan di [`scripts/soal2.sh`](scripts/soal2.sh).
 Buka console **rootkit** di GNS3, lalu copy-paste seluruh isi skrip `scripts/soal2.sh` berikut:
 ```bash
 # Ambil IP dan gateway internet lewat DHCP NAT
-udhcpc -i eth0
+dhclient eth0
 
 # Aktifkan IP forwarding di kernel Linux
 sysctl -w net.ipv4.ip_forward=1
